@@ -1,0 +1,30 @@
+.btn{
+    width: auto;
+    height: 38px;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+}
+
+.btn.success{
+    font-weight: bold;
+    background-color: #009643;
+    color: white;
+}
+
+.btn.success:hover{
+    background-color: green;
+}
+
+
+.btn.primary{
+    font-weight: bold;
+    background-color: #66B1FF;
+    color: white;
+}
+
+.btn.primary:hover{
+    background-color: blue;
+}

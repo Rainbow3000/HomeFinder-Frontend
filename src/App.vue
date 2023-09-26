@@ -1,26 +1,37 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+     <div id="app">
+       <!-- <Login/> -->
+       <!-- <Register/> -->
+       <!-- <Overlay/> -->
+       <navbar></navbar>
+       <RouterView/>
+     </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
-export default {
+import Navbar from './components/navbar/Navbar.vue';
+import Overlay from '@/components/overlay/Overlay.vue'
+import Login from './components/login/Login.vue';
+import Register from '@/components/register/Register.vue'
+export default {  
   name: 'App',
   components: {
-    HelloWorld
+    Navbar,
+    Overlay,
+    Login,
+    Register
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
+  @import url('./assets/css/reset.css');
+
+  #app{
+    width: 100%;
+    height: auto;
+    padding-bottom: 50px;
+    position: relative;
+  }
 </style>
