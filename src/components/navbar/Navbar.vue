@@ -26,9 +26,9 @@
             </div>
             <div class="navbar-icon">
                 <i class="fa-regular fa-user"></i>
-                <span>Đăng Nhập</span>
+                <span @click="onLoginForm">Đăng Nhập</span>
                 <span> / </span>
-                <span>Đăng Ký</span>
+                <span @click="onRegisterForm">Đăng Ký</span>
             </div>
             <div class="navbar-icon">
                 <i class="fa-solid fa-gear"></i>
@@ -39,11 +39,25 @@
 </template>
 
 <script>
-
+import { useStore } from 'vuex'
 export default {
-    name:'NavbarComponent'
+    name:'NavbarComponent',
+    setup(){
+        const store = useStore(); 
+        const onLoginForm = ()=>{
+            store.commit('login')
+        }      
+        
+        const onRegisterForm = ()=>{
+            store.commit('register')
+        }     
+        
+        return {
+            onLoginForm,
+            onRegisterForm
+        }
+    }
 }
-
 </script>
 
 

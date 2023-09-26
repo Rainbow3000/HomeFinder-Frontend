@@ -2,7 +2,7 @@
     <div id="register-container">
         <div class="register-title">
             <h1>Đăng ký</h1>
-            <i class="fa-solid fa-xmark"></i>
+            <i @click="onCloseRegisterForm" class="fa-solid fa-xmark"></i>
         </div>
         <form action="">
             <div class="input-container">
@@ -34,11 +34,24 @@
 
 
 <script>
+    import { useStore } from 'vuex';
     import Button from '../button/Button.vue';
-
     export default {
         components:{
             Button
+        }
+        ,
+        setup(){
+            const store = useStore(); 
+
+            const onCloseRegisterForm = ()=>{
+                store.commit('register'); 
+            }
+
+            return {
+                onCloseRegisterForm
+            }
+
         }
     }
 </script>

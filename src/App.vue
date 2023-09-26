@@ -1,8 +1,8 @@
 <template>
      <div id="app">
-       <!-- <Login/> -->
-       <!-- <Register/> -->
-       <!-- <Overlay/> -->
+       <Login v-if="isLogin"/> 
+       <Register v-if="isRegister"/> 
+       <Overlay v-if="isLogin || isRegister"/>
        <navbar></navbar>
        <RouterView/>
      </div>
@@ -14,6 +14,9 @@ import Navbar from './components/navbar/Navbar.vue';
 import Overlay from '@/components/overlay/Overlay.vue'
 import Login from './components/login/Login.vue';
 import Register from '@/components/register/Register.vue'
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import store from './store/store';
 export default {  
   name: 'App',
   components: {
@@ -21,6 +24,13 @@ export default {
     Overlay,
     Login,
     Register
+  },
+  setup(props) {
+     const store = useStore(); 
+     return {
+      isLogin:computed(()=> store.state.isLogin),
+      isRegister:computed(()=> store.state.isRegister),
+     }
   }
 }
 </script>

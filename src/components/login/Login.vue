@@ -2,7 +2,7 @@
     <div id="login-container">
         <div class="login-title">
             <h1>Đăng nhập</h1>
-            <i class="fa-solid fa-xmark"></i>
+            <i @click="onCloseLoginForm" class="fa-solid fa-xmark"></i>
         </div>
         <form action="">
             <div class="input-container">
@@ -28,10 +28,20 @@
 
 <script>
     import Button from '../button/Button.vue';
-
+    import { useStore } from 'vuex';
     export default {
         components:{
             Button
+        },
+        setup(){
+            const store = useStore(); 
+            const onCloseLoginForm = ()=>{
+                store.commit('login'); 
+            }
+
+            return {
+                onCloseLoginForm
+            }
         }
     }
 </script>
