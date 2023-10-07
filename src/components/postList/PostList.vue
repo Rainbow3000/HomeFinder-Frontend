@@ -1,91 +1,46 @@
 <template>
-    <h1 class="table-title">A Fancy Table</h1>
-    <div class="table-container"> 
+  <div class="table-container"> 
      <table id="table">
        <tr>
-         <th>Company</th>
-         <th>Contact</th>
-         <th>Country</th>
-         <th>Chức Năng</th>
+         <th>Tên</th>
+         <th>Mô tả</th>
+         <th>Ảnh</th>
+         <th>Giá</th>
+         <th>Trạng Thái</th>
+         <th>Diện tích</th>
+         <th>Địa chỉ</th>
+         <th>Loại phòng</th>
+         <th>Chức năng</th>
        </tr>
-       <tr>
-         <td>Alfreds Futterkiste</td>
-         <td>Maria Anders</td>
-         <td>Germany</td>
-         <td>Thêm Sửa Xóa</td>
+       <tr v-for="room in rooms" :key="room.roomId">
+         <td>{{ room.name }}</td>
+         <td>{{ room.description }}</td>
+         <td><img class="table-post-img" :src="room.image" alt=""></td>
+         <td>{{ room.price }}</td>
+         <td>{{ room.status }}</td>
+         <td>{{ room.area }}</td>
+         <td>{{ room.address }}</td>
+         <td>{{ room.level }}</td>
+         <td><button>Sửa</button> <button>Xóa</button></td>
        </tr>
-       <tr>
-         <td>Berglunds snabbköp</td>
-         <td>Christina Berglund</td>
-         <td>Sweden</td>
-       </tr>
-       <tr>
-         <td>Centro comercial Moctezuma</td>
-         <td>Francisco Chang</td>
-         <td>Mexico</td>
-       </tr>
-       <tr>
-         <td>Ernst Handel</td>
-         <td>Roland Mendel</td>
-         <td>Austria</td>
-       </tr>
-       <tr>
-         <td>Island Trading</td>
-         <td>Helen Bennett</td>
-         <td>UK</td>
-       </tr>
-       <tr>
-         <td>Königlich Essen</td>
-         <td>Philip Cramer</td>
-         <td>Germany</td>
-       </tr>
-       <tr>
-         <td>Laughing Bacchus Winecellars</td>
-         <td>Yoshi Tannamuri</td>
-         <td>Canada</td>
-       </tr>
-       <tr>
-         <td>Magazzini Alimentari Riuniti</td>
-         <td>Giovanni Rovelli</td>
-         <td>Italy</td>
-       </tr>
-       <tr>
-         <td>North/South</td>
-         <td>Simon Crowther</td>
-         <td>UK</td>
-       </tr>
-       <tr>
-         <td>Paris spécialités</td>
-         <td>Marie Bertrand</td>
-         <td>France</td>
-       </tr>
-       <tr>
-         <td>Paris spécialités</td>
-         <td>Marie Bertrand</td>
-         <td>France</td>
-       </tr>
-       <tr>
-         <td>Paris spécialités</td>
-         <td>Marie Bertrand</td>
-         <td>France</td>
-       </tr>
-       <tr>
-         <td>Paris spécialités</td>
-         <td>Marie Bertrand</td>
-         <td>France</td>
-       </tr>
-       <tr>
-         <td>Paris spécialités</td>
-         <td>Marie Bertrand</td>
-         <td>France</td>
-       </tr>
-     </table>
+      </table>
+      <h1 class="news-empty">{{ rooms.length === 0 ? "Bạn chưa đăng tin" :"" }}</h1>
     </div>
 </template>
 
 
 <script>
-
+import { useStore} from 'vuex'
+import { computed } from 'vue';
+   export default {
+    setup(){
+      const store = useStore(); 
+      store.dispatch("getRoomList")
+      return {
+        rooms : computed(()=> store.state.rooms)
+      }
+    }
+   }
 </script>
 
 

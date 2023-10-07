@@ -5,7 +5,7 @@ import Details from './views/details/Details.vue'
 import Dashboard from './views/dashboard/Dashboard.vue'
 const routes = [
   { path: '/', component: Home },
-  { path: '/details', component: Details },
+  { path: '/details/:id', component: Details },
   {path:'/dashboard',component:Dashboard}
 ]
 

@@ -3,16 +3,33 @@
         <div class="home-header">
             <div class="home-header-wapper">
                 <div class="home-search">
-                    <input type="text" placeholder="Nhập kiểu phòng cần tìm..." />
+                    <input v-model="filter.TextSearch" type="text" placeholder="Nhập kiểu phòng cần tìm..." />
                     <div class="home-search-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
                 </div>
-                <div class="home-filter">
-                    <span>Lọc theo khu vực</span>
-                    <i class="fa-solid fa-caret-down"></i>
+                <div @click="onOpenDropdownArea" class="home-filter">
+                    <i style="margin-right: 5px;" class="fa-solid fa-location-dot"></i> 
+                    <span>{{ filter.City !== "" ? `TP.${filter.City}` : 'Lọc theo thành phố'  }}</span>
+                    <i  class="fa-solid fa-caret-down"></i>
+                    <div v-if="isDropdownAreaOpen === true" class="filter-area">
+                        <ul>
+                            <li @click="onFilterCity('Hà Nội')">Hà Nội</li>
+                            <li @click="onFilterCity('Hồ Chí Minh')">Hồ Chí Minh</li>
+                            <li @click="onFilterCity('Nha Trang')">Nha Trang</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="home-filter">
-                    <span>Lọc theo mức giá</span>
+                <div @click="onOpenDropdownPrice" class="home-filter">
+                    <i style="margin-right: 5px;" class="fa-solid fa-dollar-sign"></i>
+                    <span>{{filter.Price !== "" ? `Từ ${filter.Price} triệu ${filter.Price === '6' ? 'trở lên':''} / tháng` : 'Lọc theo mức giá'}}</span>
                     <i class="fa-solid fa-caret-down"></i>
+                    <div v-if="isDropdownPriceOpen" class="filter-price">
+                        <ul>
+                            <li @click="onFilterPrice('1-2')">Từ 1 - 2 triệu / tháng</li>
+                            <li @click="onFilterPrice('2-4')">Từ 2 - 4 triệu / tháng</li>
+                            <li @click="onFilterPrice('4-6')">Từ 4 - 6 triệu / tháng</li>
+                            <li @click="onFilterPrice('6')">  Từ 6 triệu trở lên  / tháng</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -20,140 +37,55 @@
         <div class="home-category">
             <ul>
                 <li class="active">Tất cả</li>
-                <li>Căn hộ</li>
-                <li>Trung cư</li>
-                <li>Bất động sản</li>
-                <li>Trọ sinh viên</li>
-                <li>Gia đình</li>
+                <li v-for="category in categorys" :key="category.categoryId" @click="onFilterCategory(category.categoryId)" >{{ category.name}} ({{ category.quantity }})</li>
             </ul>
         </div>
         <div class="home-main">
             <div class="home-main-left">
                 <h1>Danh sách các phòng</h1>
-                <div class="home-product">
+                <div class="home-product" v-for="room in rooms" :key="room.roomId">
                     <div class="home-product-left">
                         <div class="user-info">
                             <div class="user-avatar">
-                                <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*" alt="avatar">
-                                <span>Hương Ly</span>
+                                <img :src="room?.image" alt="avatar">
+                                <span>{{ room?.userName }}</span>
                             </div>
                             <div class="product-time-post">
-                                <span>Thời gian: </span>
-                                <span>20-12-2023</span>
+                                <span>Thời gian đăng: </span>
+                                <span>{{ covertDate(room?.createdDate)}}</span>
                             </div>
                         </div>
-                        <span>Chung cư mini 35m2 có xép+ phòng khách Đầy đủ nội thất khúc Thừa dụ</span>
+                        <span>{{ room.name }}</span>
                         <div class="home-product-img">
                             <div class="home-product-img-top">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                                <img :src="room?.image" alt="">
                             </div>
                             <div class="home-product-img-bottom">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                                <div class="home-product-bottom-left">
+                                    <img  v-for="image in room.images.slice(0,3)" :key="image" :src="image.url" alt="">
+                                </div>
+                                <div class="home-product-bottom-right">
+                                    <h1>Thông tin sơ lược</h1>
+                                    <div class="home-product-info">
+                                        <ul>
+                                    
+                                            <li><i class="fa-solid fa-money-check-dollar room-info-icon"></i> Giá: <strong><span style="color: red;">{{ convertToVND(room?.price) }}</span> / 1 tháng</strong></li>
+                                            <li><i class="fa-solid fa-location-dot room-info-icon"></i> Địa chỉ: <strong> {{ room?.address }}</strong></li>
+                                            <li><i class="fa-solid fa-chart-area room-info-icon"></i> Diện tích: <strong>{{ AreaEnum[room.area] }}</strong></li>
+                                            <li><i class="fa-solid fa-phone room-info-icon"></i> Số điện thoại:  <strong>{{ room.phoneNumber }}</strong></li>
+                                            <li><router-link :to="'/details/' + room.roomId" ><Button type="success" name="Xem chi tiết"></Button></router-link></li>      
+                                        </ul>
+                                        <div class="product-favourite">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </div>
+                                    </div>
+                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="home-product-right">
-                        <h1>Thông tin sơ lược</h1>
-                        <div class="home-product-info">
-                            <ul>
-                                <li>- Giá: <span style="color: red;">500.000 vnd</span> / 1 tháng</li>
-                                <li>- Địa chỉ: Hà Nội</li>
-                                <li>- Diện tích: 50 m2</li>
-                                <li>- Điện thoại liên lạc: 0363578628</li>
-                                <li><router-link to="/details"><Button type="success" name="Xem chi tiết"></Button></router-link></li>      
-                            </ul>
-                            <div class="product-favourite">
-                                <i class="fa-regular fa-heart"></i>
-                            </div>
-                        </div>
-                    </div>
+                  
                 </div>
-                <div class="home-product">
-                    <div class="home-product-left">
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*" alt="avatar">
-                                <span>Ngọc Lan</span>
-                            </div>
-                            <div class="product-time-post">
-                                <span>Thời gian: </span>
-                                <span>20-12-2023</span>
-                            </div>
-                        </div>
-                        <span>Chung cư mini 35m2 có xép+ phòng khách Đầy đủ nội thất khúc Thừa dụ</span>
-                        <div class="home-product-img">
-                            <div class="home-product-img-top">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            </div>
-                            <div class="home-product-img-bottom">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home-product-right">
-                        <h1>Thông tin sơ lược</h1>
-                        <div class="home-product-info">
-                            <ul>
-                                <li>- Giá: <span style="color: red;">500.000 vnd</span> / 1 tháng</li>
-                                <li>- Địa chỉ: Hà Nội</li>
-                                <li>- Diện tích: 50 m2</li>
-                                <li>- Điện thoại liên lạc: 0363578628</li>
-                                <li><Button type="success" name="Xem chi tiết"></Button></li>      
-                            </ul>
-                            <div class="product-favourite">
-                                <i class="fa-regular fa-heart"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div class="home-product">
-                    <div class="home-product-left">
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*" alt="avatar">
-                                <span>Minh Trí</span>
-                            </div>
-                            <div class="product-time-post">
-                                <span>Thời gian: </span>
-                                <span>20-12-2023</span>
-                            </div>
-                        </div>
-                        <span>Chung cư mini 35m2 có xép+ phòng khách Đầy đủ nội thất khúc Thừa dụ</span>
-                        <div class="home-product-img">
-                            <div class="home-product-img-top">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            </div>
-                            <div class="home-product-img-bottom">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                                <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home-product-right">
-                        <h1>Thông tin sơ lược</h1>
-                        <div class="home-product-info">
-                            <ul>
-                                <li>- Giá: <span style="color: red;">500.000 vnd</span> / 1 tháng</li>
-                                <li>- Địa chỉ: Hà Nội</li>
-                                <li>- Diện tích: 50 m2</li>
-                                <li>- Điện thoại liên lạc: 0363578628</li>
-                                <li><Button type="success" name="Xem chi tiết"></Button></li>                           
-                            </ul>
-                            <div class="product-favourite">
-                                <i class="fa-regular fa-heart"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+             
 
                 <div class="home-pagination">
                     <ul>
@@ -198,34 +130,27 @@
                 <h1>Bộ lọc chi tiết</h1>
                 <ul class="home-filter-by-details">
                     <span>Lọc theo thời gian</span>
-                    <li>Mới nhất</li>
-                    <li>Trong tuần</li>
-                    <li>Cần cho thuê gấp</li>
+                    <li @click = "onFilterTime('newest')">Mới nhất</li>
+                    <li @click = "onFilterTime('week')">Trong tuần</li>
+                    <li @click = "onFilterTime('hurry')">Cần cho thuê gấp</li>
                 </ul>
 
 
                 <ul class="home-filter-by-details">
                     <span>Lọc theo diện tích</span>
-                    <li>Dưới 30 m²</li>
-                    <li>30 - 50 m²</li>
-                    <li>50 - 80 m²</li>
-                    <li>100 - 150 m²</li>
-                    <li>150 - 200 m²</li>
-                    <li>Trên 200 m²</li>
+                    <li @click="onFilterArea(1)">Dưới 30 m²</li>
+                    <li @click="onFilterArea(2)">30 - 50 m²</li>
+                    <li @click="onFilterArea(3)">50 - 80 m²</li>
+                    <li @click="onFilterArea(4)">100 - 150 m²</li>
+                    <li @click="onFilterArea(5)">150 - 200 m²</li>
+                    <li @click="onFilterArea(6)">Trên 200 m²</li>
                 </ul>
 
                 <ul class="home-filter-by-details">
                     <span>Lọc theo tình trạng nội thất</span>
-                    <li>Cao cấp</li>
-                    <li>Đầy đủ</li>
-                    <li>Nhà trống</li>
-                </ul>
-
-                <ul class="home-filter-by-details">
-                    <span>Lọc theo mức độ an ninh</span>
-                    <li>Tốt</li>
-                    <li>Khá</li>
-                    <li>Trung bình</li>
+                    <li @click="onFilterLevel(1)">Cao cấp</li>
+                    <li @click="onFilterLevel(2)">Đầy đủ</li>
+                    <li @click="onFilterLevel(3)">Nhà trống</li>
                 </ul>
             </div>
         </div>
@@ -234,8 +159,93 @@
 
 <script>
 import Button from '@/components/button/Button.vue';
+import { computed, reactive, ref,watch } from 'vue';
+import { useStore } from 'vuex';
+import {AreaEnum} from '@/enum/enum.js'
+import {convertToVND,covertDate} from '@/helper/helper'
 export default {
     components: { Button },
+    setup(){
+        const filter = reactive({
+            Price:"",
+            Area:0,
+            City:"",
+            Offset:0,
+            Limit:10,
+            TextSearch:"",
+            Level:0,
+            Time:"",
+            CategoryId:""
+        }) 
+
+        const isDropdownAreaOpen = ref(false); 
+        const isDropdownPriceOpen = ref(false); 
+        const store = useStore();
+        store.dispatch("getCategoryList"); 
+        store.dispatch("getRoomList",filter); 
+        const onOpenDropdownArea = ()=>{
+            isDropdownAreaOpen.value = !isDropdownAreaOpen.value; 
+            isDropdownPriceOpen.value = false; 
+        }
+
+        const onOpenDropdownPrice = ()=>{
+            isDropdownPriceOpen.value = !isDropdownPriceOpen.value;
+            isDropdownAreaOpen.value = false;
+        }
+
+        const onFilterCity = (value)=>{
+            filter.City = value; 
+        }
+
+        const onFilterPrice = (value)=>{
+            filter.Price = value; 
+        }
+
+        const onFilterTime = (value)=>{
+            filter.Time = value; 
+        }
+
+        const onFilterArea = (value)=>{
+            filter.Area = value;
+        }
+
+        const onFilterLevel = (value)=>{
+            filter.Level = value; 
+        }
+      
+
+        watch(()=>filter.CategoryId || filter.City || filter.Price || filter.Time || filter.Level || filter.Offset || filter.Area, (newValue,oldValue)=>{
+            store.dispatch("getRoomList",filter); 
+        })
+
+        watch(()=>filter.TextSearch,(newValue,oldValue)=>{
+            setTimeout(() => {     
+                store.dispatch("getRoomList",filter); 
+            },1500);
+        })
+
+        const onFilterCategory = (categoryId)=>{
+            filter.CategoryId = categoryId; 
+        }
+        return {
+            categorys:computed(()=> store.state.categorys), 
+            rooms:computed(()=> store.state.rooms),
+            onOpenDropdownArea,
+            onOpenDropdownPrice,
+            isDropdownAreaOpen,
+            isDropdownPriceOpen,
+            AreaEnum,
+            convertToVND,
+            onFilterCity,
+            onFilterPrice,
+            onFilterTime,
+            onFilterArea,
+            onFilterLevel,
+            filter,
+            onFilterCategory,
+            covertDate
+        }
+    }
 }
 </script>
 

@@ -5,8 +5,7 @@
             <ul>
                 <li @click="()=>handleChangeComponent(0)">Tổng quan</li>
                 <li @click="()=>handleChangeComponent(1)">Quản lý bài đăng</li>
-                <h1>{{ count }}</h1>
-                <button @click="handleClick">click me</button>
+                <li @click="()=>handleChangeComponent(2)">Quản lý tài khoản</li>
             </ul>
         </div>
         <div class="dashboard-right">
@@ -30,6 +29,7 @@
         },
 
         setup() {
+          
             const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
             const store = useStore();    
             localStorage.setItem('component',0); 
@@ -39,14 +39,9 @@
                 localStorage.setItem('component',number); 
             }
 
-            function handleClick(){
-                store.dispatch('incrementMutation')
-            }
             return {
                 componentNumber,
                 handleChangeComponent,
-                handleClick,
-                count: computed(() => store.state.count),
             }
         },
 

@@ -1,20 +1,16 @@
 <template>
     <div class="details-container">
         <h1 class="details-title">Xem chi tiết phòng</h1>
-        <span class="details-home-name">Chung cư mini 35m2 có xép+ phòng khách Đầy đủ nội thất khúc Thừa dụ</span>
+        <span class="details-home-name">{{ singleRoom?.name }}</span>
         <div class="details-main">
             <div class="details-main-left"> 
                     <div class="details-img">
                         <div class="details-img-main">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                            <img :src="singleRoom?.image" alt="">
                         </div>
                         <div class="details-img-sub">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                            <img v-for="image in singleRoom?.images" :key="image" :src="image?.url" alt="">
+
                         </div>
                     </div>
             </div>
@@ -22,24 +18,25 @@
                     <div class="details-main-right-top">
                         <div class="details-main-avatar">
                             <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                            <span>Nguyễn Văn A</span>
-                            <i class="fa-regular fa-eye"></i>
+                            <span>{{ singleRoom?.userName }}</span>
+                          
                         </div>
                         <div class="details-main-info">
                             <ul>
                                 <li><i class="fa-regular fa-user"></i> Giới tính: <strong>Nam</strong></li>
-                                <li><i class="fa-solid fa-mobile-screen"></i> Di động: <strong>0363578628</strong></li>
+                                <li><i class="fa-solid fa-mobile-screen"></i> Di động: <strong>{{ singleRoom?.phoneNumber }}</strong></li>
                               
-                                <li><t-button type="primary" name="Nhắn tin trực tiếp"></t-button></li>
+                                <li>
+                                    <a target="_blank" :href="'https://zalo.me/'+ singleRoom?.phoneNumber"><t-button type="primary" name="Liên hệ Zalo"></t-button></a>
+                                </li>
                             </ul>
                         </div>
                     </div>
                     <div class="details-main-bottom">
                         <ul>
-                            <li><i class="fa-solid fa-signal"></i> Trạng thái: <strong>Chưa cho thuê</strong></li>
-                            <li><i class="fa-solid fa-chart-area"></i> Diện tích: <strong>50 m2</strong></li>
-                            <li><i class="fa-solid fa-location-dot"></i> Địa điểm: <strong>Hà Nội</strong></li>
-                            <li><i class="fa-solid fa-money-bill"></i> Giá: <strong><span style="color: red;">500.000 vnd </span>/ 1 tháng</strong></li>
+                            <li><i class="fa-solid fa-chart-area"></i> Diện tích: <strong>{{ AreaEnum[singleRoom?.area] }}</strong></li>
+                            <li><i class="fa-solid fa-location-dot"></i> Địa điểm: <strong>{{ singleRoom?.address}} - {{ singleRoom?.city }}</strong></li>
+                            <li><i class="fa-solid fa-money-bill"></i> Giá: <strong><span style="color: red;">{{convertToVND(singleRoom?.price)}}</span>/ 1 tháng</strong></li>
                             <li></li>
                         </ul>
                     </div>
@@ -52,24 +49,9 @@
                 <i class="fa-regular fa-heart"></i>
             </div>
             <p class="details-description-body">
-                🏠 Địa chỉ : Ngõ 31 Hoàng Cầu, Đống Đa, Hà Nội <br/><br/>
-                    - Quận: Đống Đa<br/><br/>
-                    ⏰ Trống<br/><br/>
-
-                    ✨Phòng 1n1k 1 bếp riêng<br/><br/>
-                    ✨Thang máy mới tinh<br/><br/>
-                    ❣Nội thất : đầy đủ khách chỉ cần xách vali tới ở : Nệm, tủ quần áo, điều hòa, nóng lạnh, tủ lạnh, tủ bếp, bếp từ, hút mùi, sofa, máy giặt riêng , rèm, giàn phơi ,...
-                    phòng cực thoáng mát, khu dân trí cao, yên tĩnh.<br/><br/>
-
-                    ❣Dịch vụ :<br/><br/>
-                    Dịch vụ : Điện 4k / số, nước 30k / khối, dv chung 300k / phòng.<br/><br/>
-                    ⛔️ Lưu ý:<br/><br/>
-                    - nhà 9 tầng- 3 mặt thoáng<br/><br/>
-                    -nhà đủ pccc- mới vận hành 1 năm<br/><br/>
-                    - Oto đỗ cửa<br/><br/>
-                    - Ghan 2 xe, ng 3 ( k nhận xe điện )<br/><br/>
-                    - Đóng 1 cọc 1<br/><br/>
-                    - Khách gọi trước 30p trước khi qua
+                <ul>
+                    <li v-for="desc in singleRoom?.description?.split('<br/>')" :key="desc" >{{ desc }}</li>
+                </ul>
               </p>
             
         </div>
@@ -94,10 +76,29 @@
 
 <script >
     import Button from '@/components/button/Button.vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+import {AreaEnum} from '@/enum/enum.js'
+import {convertToVND} from '@/helper/helper'
     export default{
         components:{
             TButton:Button
+        },
+
+        setup(){
+            const route = useRoute();
+            const roomId = route.params.id; 
+            const store = useStore(); 
+            store.dispatch('getSingleRoom',roomId); 
+
+            return {
+                singleRoom : computed(()=> store.state.singleRoom),
+                AreaEnum,
+                convertToVND
+            }
         }
+
     }
 
 </script>

@@ -7,7 +7,7 @@
             <ul class="navbar-link">
                 <li>
                     <router-link class="link" to="/dashboard">
-                        Quản trị
+                        Quản Lý Tin
                     </router-link>
                 </li>
                 <li>Tin Tức</li>
@@ -16,6 +16,10 @@
         </div>
 
         <div class="navbar-right">
+            <div v-if="user !== null" class="navbar-icon">
+                <i class="fa-regular fa-user"></i>
+                <span style="color: green;"> {{ user.userName }}</span>
+            </div>
             <div class="navbar-icon">
                 <i class="fa-regular fa-heart"></i>
                 <span>Tin Đã Lưu</span>
@@ -24,37 +28,78 @@
                 <i class="fa-regular fa-bell"></i>
                 <span>Thông Báo</span>
             </div>
-            <div class="navbar-icon">
+            <div v-if="user === null" class="navbar-icon">
                 <i class="fa-regular fa-user"></i>
                 <span @click="onLoginForm">Đăng Nhập</span>
                 <span> / </span>
                 <span @click="onRegisterForm">Đăng Ký</span>
             </div>
-            <div class="navbar-icon">
-                <i class="fa-solid fa-gear"></i>
-                <span>Cài Đặt</span>
+
+            <div v-if="user !== null" @click="onLogout" class="navbar-icon">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Đăng Xuất</span>
+            </div>
+
+            <div  class="navbar-icon">
+                <div @click="onShowCreatePost" class="btn-create-post-wraper">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                    <strong>Đăng Tin</strong>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import { computed } from 'vue';
 import { useStore } from 'vuex'
+import Button from '../button/Button.vue';
+import { resetToastMessage } from '@/helper/helper';
 export default {
     name:'NavbarComponent',
+    components:{
+        Button
+    },
     setup(){
         const store = useStore(); 
+ 
         const onLoginForm = ()=>{
-            store.commit('login')
+            store.commit('loginLink')
+            store.commit('showOverlay')
         }      
         
         const onRegisterForm = ()=>{
-            store.commit('register')
-        }     
+            store.commit('registerLink')
+            store.commit('showOverlay')
+        } 
+
+        const onShowCreatePost =()=>{
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user === null){
+                store.commit('showToastMessage',{
+                        isShow:true,
+                        message:"Bạn phải đăng nhập để có thể đăng tin !", 
+                        type :"error"
+                })
+                resetToastMessage(store); 
+                return; 
+            }
+
+            store.commit("showCreatePost")
+            store.commit('showOverlay')
+        }    
+
+        const onLogout = ()=>{
+            store.commit("logout");
+            resetToastMessage(store); 
+        }
         
         return {
             onLoginForm,
-            onRegisterForm
+            onRegisterForm,
+            onShowCreatePost,
+            onLogout,
+            user:computed(()=> store.state.user)
         }
     }
 }
@@ -90,7 +135,20 @@ export default {
     z-index: 100;
     border-bottom: 0.5px solid rgba(128, 128, 128, 0.164);
 }
+.btn-create-post-wraper{
+    background-color: #009643;
+    color: white;
+    display: flex;
+    border-radius: 4px;
+    align-items: center;
+    width: 120px;
+    justify-content: center;
+    height: 40px;
+}
 
+.btn-create-post-wraper:hover{
+    background-color: green;
+}
 .navbar-left{
     display: flex;
     align-items: center;
@@ -106,7 +164,7 @@ export default {
 }
 
 .navbar-link li{
-    margin-left: 30px;
+    margin-left: 20px;
     cursor: pointer;
 }
 
@@ -115,7 +173,7 @@ export default {
 }
 
 .navbar-right{
-    flex: 1;
+    flex: 2;
     display: flex;
     align-items: center;
     font-weight: 500;
@@ -124,7 +182,7 @@ export default {
 }
 
 .navbar-right div{
-    margin-right: 30px;
+    margin-left: 20px;
     cursor: pointer;
 }
 

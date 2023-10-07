@@ -1,21 +1,21 @@
 
-.table-title{
-    margin: 25px !important;
-}
+
 
 #table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
-    width: 95%;
+    width: 100%;
     margin-top: 20px;
     margin: 0 auto;
-    height: 80%;
+    height: auto;
   }
   
   #table td, #table th {
     border: 1px solid #ddd;
     padding: 8px;
   }
+
+  
   
   #table tr:nth-child(even){background-color: #f2f2f2;}
   
@@ -29,8 +29,17 @@
     color: white;
   }
 
+
   .table-container{
     width: 100%;
     height: 80%;
     overflow-y: auto;
+  }
+  .news-empty{
+    margin-top: 10px;
+  }
+
+  .table-post-img{
+    width: 120px;
+    height: 120px;
   }

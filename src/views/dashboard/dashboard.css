@@ -1,5 +1,5 @@
 .dashboard-container{
-    width: 1300px;
+    width: 95%;
     height: auto;
     margin: 0 auto;
     margin-top: 150px;
@@ -35,7 +35,7 @@
 }
 
 .dashboard-right{
-    flex:3;
+    flex:5;
     height: 70vh;
     margin-top: 45px;
     background-color: #FFFFFF;

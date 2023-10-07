@@ -4,19 +4,33 @@
             <h1>Đăng ký</h1>
             <i @click="onCloseRegisterForm" class="fa-solid fa-xmark"></i>
         </div>
-        <form action="">
+        <form @submit="onSubmitForm">
+            <div class="input-container">
+                <label for="">Tên người dùng <span style="color: red;">(*)</span></label>
+                <span style="color:red">{{ error.userName }}</span>
+                <input v-model="userData.userName" type="text" placeholder="Tên ">
+            </div>
+
+            <div class="input-container">
+                <label for="">Số điện thoại <span style="color: red;">(*)</span></label>
+                <span style="color:red">{{ error.phone }}</span>
+                <input v-model="userData.phone" type="text" placeholder="Số điện thoại ">
+            </div>
             <div class="input-container">
                 <label for="">Email <span style="color: red;">(*)</span></label>
-                <input type="email" placeholder="Email">
+                <span style="color:red">{{ error.email }}</span>
+                <input v-model="userData.email" type="email" placeholder="Email">
             </div>
             <div class="input-container">
                 <label for="">Mật khẩu <span style="color: red;">(*)</span></label>
-                <input type="password" placeholder="Mật khẩu">
+                <span style="color:red">{{ error.password }}</span>
+                <input v-model="userData.password" type="password" placeholder="Mật khẩu">
             </div>
 
             <div class="input-container">
                 <label for="">Nhập lại mật khẩu <span style="color: red;">(*)</span></label>
-                <input type="password" placeholder="Nhập lại mật khẩu">
+                <span style="color:red">{{ error.rePassword }}</span>
+                <input v-model="userData.rePassword" type="password" placeholder="Nhập lại mật khẩu">
             </div>
 
 
@@ -29,13 +43,17 @@
             <i class="fa-brands fa-google"></i>
             <i class="fa-brands fa-facebook"></i>
         </div>
+    
     </div>
 </template>
 
 
 <script>
+import { reactive, computed , watch, ref } from 'vue';
     import { useStore } from 'vuex';
     import Button from '../button/Button.vue';
+    import { validateEmail,validateIsEmpty,validateNotMatchPassword, validatePasswordInvalid,validateUserNameInvalid,validatePhoneNumber} from '@/validate/validate';
+    import {resetToastMessage} from '@/helper/helper.js'
     export default {
         components:{
             Button
@@ -44,12 +62,115 @@
         setup(){
             const store = useStore(); 
 
+            const isError = ref(false); 
+
+            const error = reactive({
+                userName:"",
+                email:"",
+                password:"",
+                rePassword:"",
+                phone:""
+            })
+
+            const userData =  reactive({
+                userName:"", 
+                email:"",
+                password:"",
+                rePassword:"",
+                phone:""
+            })
             const onCloseRegisterForm = ()=>{
-                store.commit('register'); 
+                store.commit('registerLink'); 
+                store.commit('hiddenOverlay')
             }
 
+            const validateForm = ()=>{
+                if(validateIsEmpty(userData.userName)){
+                    error.userName = "Tên người dùng không được để trống"
+                    isError.value = true; 
+                }
+
+                if(!validatePhoneNumber(userData.phone)){
+                    error.phone = "Số điện thoại không hợp lệ"
+                    isError.value = true;
+                }
+
+                if(validateIsEmpty(userData.phone)){
+                    error.phone = "Số điện thoại không được để trống"
+                    isError.value = true;
+                }
+
+
+                if(!validateEmail(userData.email)){
+                    error.email = "Email không hợp lệ"
+                    isError.value = true;
+                }
+
+
+                if(validateIsEmpty(userData.email)){
+                    error.email = "Email không được để trống"
+                    isError.value = true;
+                }
+
+
+                if(validateIsEmpty(userData.password)){
+                    error.password = "Mật khẩu không được để trống"
+                    isError.value = true;
+                }
+
+                if(validateIsEmpty(userData.rePassword)){
+                    error.rePassword = "Mật khẩu nhập lại không được để trống"
+                    isError.value = true;
+                }   
+
+
+                if(validateUserNameInvalid(userData.userName)){
+                    error.userName = "Tên người dùng phải lớn hơn 5 kí tự"
+                    isError.value = true;
+                }
+
+              
+
+                if(validatePasswordInvalid(userData.password)){
+                    error.password = "Mật khẩu phải lớn hơn hoặc bằng 6 kí tự"
+                    isError.value = true;
+                }
+
+                if(validateNotMatchPassword(userData.password,userData.rePassword)){
+                    error.rePassword = "Mật khẩu nhập lại không khớp."
+                    isError.value = true;
+                } 
+            }
+
+          
+            const onSubmitForm = (event)=>{
+                event.preventDefault();
+                isError.value = false; 
+                validateForm();
+                if(isError.value) return;  
+                store.dispatch("userRegister",userData);
+            }
+
+            const isRegsiterSuccess = computed(()=>store.state.account.registerSuccess); 
+
+            watch(()=> isRegsiterSuccess.value, (newValue,oldValue)=>{
+                if(newValue === true){
+                    store.commit('registerLink'); 
+                    store.commit('showToastMessage',{
+                        isShow:true,
+                        message:"Đăng ký tài khoản thành công !", 
+                        type :"success"
+                    })
+                    store.commit('loginLink')
+                    resetToastMessage(store); 
+                }
+            })
+
             return {
-                onCloseRegisterForm
+                onCloseRegisterForm,
+                onSubmitForm,
+                error,
+                userData
             }
 
         }
@@ -63,6 +184,7 @@
 .social-container{
     display: flex;
     align-items: center;
+    margin-top: 10px;
 }
 .social-container span{
     font-size: 14px;
@@ -87,7 +209,8 @@
 
  #register-container{
      width: 500px;
-     height: 400px;
+     min-height: 500px;
+     height: auto;
      background-color: #FFFFFF;
      position: fixed;
      top: 50%;
