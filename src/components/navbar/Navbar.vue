@@ -5,10 +5,8 @@
                 <h1><router-link class="link" to="/">HOME FINDER</router-link></h1>
             </div>
             <ul class="navbar-link">
-                <li>
-                    <router-link class="link" to="/dashboard">
+                <li @click="onShowDashBoard">
                         Quản Lý Tin
-                    </router-link>
                 </li>
                 <li>Tin Tức</li>
                 <li>Hướng Dẫn</li>
@@ -55,6 +53,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex'
 import Button from '../button/Button.vue';
 import { resetToastMessage } from '@/helper/helper';
+import { useRouter } from 'vue-router';
 export default {
     name:'NavbarComponent',
     components:{
@@ -62,7 +61,7 @@ export default {
     },
     setup(){
         const store = useStore(); 
- 
+        const router = useRouter(); 
         const onLoginForm = ()=>{
             store.commit('loginLink')
             store.commit('showOverlay')
@@ -84,9 +83,25 @@ export default {
                 resetToastMessage(store); 
                 return; 
             }
-
-            store.commit("showCreatePost")
+            store.commit("showCreatePost",{
+                type:1
+            })
             store.commit('showOverlay')
+        }    
+
+        const onShowDashBoard =()=>{
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user === null){
+                store.commit('showToastMessage',{
+                        isShow:true,
+                        message:"Bạn phải đăng nhập để truy cập quản lý !", 
+                        type :"error"
+                })
+                resetToastMessage(store); 
+                return; 
+            }
+
+            router.push({path:'/dashboard'})
         }    
 
         const onLogout = ()=>{
@@ -99,6 +114,7 @@ export default {
             onRegisterForm,
             onShowCreatePost,
             onLogout,
+            onShowDashBoard,
             user:computed(()=> store.state.user)
         }
     }

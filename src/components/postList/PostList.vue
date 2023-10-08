@@ -1,43 +1,99 @@
 <template>
-  <div class="table-container"> 
+  <div v-if="rooms.length > 0" class="table-container"> 
      <table id="table">
        <tr>
          <th>Tên</th>
          <th>Mô tả</th>
          <th>Ảnh</th>
          <th>Giá</th>
-         <th>Trạng Thái</th>
          <th>Diện tích</th>
          <th>Địa chỉ</th>
          <th>Loại phòng</th>
+         <th>Trạng Thái</th>
          <th>Chức năng</th>
        </tr>
        <tr v-for="room in rooms" :key="room.roomId">
          <td>{{ room.name }}</td>
          <td>{{ room.description }}</td>
-         <td><img class="table-post-img" :src="room.image" alt=""></td>
+         <td><img v-if="room.image !== ''" class="table-post-img" :src="room.image" alt=""></td>
          <td>{{ room.price }}</td>
-         <td>{{ room.status }}</td>
-         <td>{{ room.area }}</td>
+         <td>{{ AreaEnum[room.area] }}</td>
          <td>{{ room.address }}</td>
-         <td>{{ room.level }}</td>
-         <td><button>Sửa</button> <button>Xóa</button></td>
+         <td>{{ LevelEnum[room.level] }}</td>
+         <td>{{ StatusEnum[room.status] }}</td>
+         <td>
+           <Button @click="onUpdatePost(room.roomId)" type="normal" name="Sửa"/>
+           <Button @click="onDeletePost(room.roomId)" type="normal" name="Xóa"/>
+           <Button @click="onUpdateStatusPost(room.roomId)" type="normal" :name=" room.status === 1 ? 'Ẩn Tin' : 'Bỏ ẩn'"/>
+          </td>
        </tr>
       </table>
-      <h1 class="news-empty">{{ rooms.length === 0 ? "Bạn chưa đăng tin" :"" }}</h1>
     </div>
+    <h1 class="news-empty">{{ rooms.length === 0 ? "Bạn chưa đăng tin" :"" }}</h1>
 </template>
 
 
 <script>
 import { useStore} from 'vuex'
-import { computed } from 'vue';
+import { computed,reactive} from 'vue';
+import Button from '../button/Button.vue';
+import { resetToastMessage } from '@/helper/helper';
+import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
    export default {
+    components:{
+      Button
+    },
     setup(){
       const store = useStore(); 
-      store.dispatch("getRoomList")
+      const filter = reactive({
+            Price:"",
+            Area:0,
+            City:"",
+            Offset:0,
+            Limit:10,
+            TextSearch:"",
+            Level:0,
+            Time:"",
+            CategoryId:""
+          }) 
+        store.dispatch("getRoomList",filter)
+        const onUpdatePost = (roomId)=>{
+          store.dispatch('getSingleRoom',roomId); 
+          store.commit("showCreatePost",{
+                type:2
+          })
+          store.commit('showOverlay')
+        }
+
+        const onDeletePost = (roomId)=>{
+          store.dispatch('deleteRoom',roomId); 
+          store.commit('showToastMessage',{
+              isShow:true,
+              message:"Xóa tin thành công !", 
+              type :"success"
+          })
+          resetToastMessage(store); 
+        }
+
+        const onUpdateStatusPost = (roomId)=>{
+          store.dispatch('updateStatusRoom',roomId); 
+          store.dispatch('getRoomList',filter); 
+          store.commit('showToastMessage',{
+              isShow:true,
+              message:"Cập nhật trạng thái tin thành công !", 
+              type :"success"
+          })
+          resetToastMessage(store); 
+        }
+
       return {
-        rooms : computed(()=> store.state.rooms)
+        rooms : computed(()=> store.state.rooms),
+        onUpdatePost,
+        onDeletePost,
+        onUpdateStatusPost,
+        AreaEnum,
+        StatusEnum,
+        LevelEnum
       }
     }
    }

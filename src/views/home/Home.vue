@@ -24,10 +24,11 @@
                     <i class="fa-solid fa-caret-down"></i>
                     <div v-if="isDropdownPriceOpen" class="filter-price">
                         <ul>
-                            <li @click="onFilterPrice('1-2')">Từ 1 - 2 triệu / tháng</li>
-                            <li @click="onFilterPrice('2-4')">Từ 2 - 4 triệu / tháng</li>
-                            <li @click="onFilterPrice('4-6')">Từ 4 - 6 triệu / tháng</li>
-                            <li @click="onFilterPrice('6')">  Từ 6 triệu trở lên  / tháng</li>
+                            <li @click="onFilterPrice('< 1')"> Từ 1 triệu trở xuống / tháng</li>
+                            <li @click="onFilterPrice('1 - 2')">Từ 1 - 2 triệu / tháng</li>
+                            <li @click="onFilterPrice('2 - 4')">Từ 2 - 4 triệu / tháng</li>
+                            <li @click="onFilterPrice('4 - 6')">Từ 4 - 6 triệu / tháng</li>
+                            <li @click="onFilterPrice('> 6')"> Từ 6 triệu trở lên  / tháng</li>
                         </ul>
                     </div>
                 </div>
@@ -47,12 +48,13 @@
                     <div class="home-product-left">
                         <div class="user-info">
                             <div class="user-avatar">
-                                <img :src="room?.image" alt="avatar">
+                                <img :src="room?.avatar" alt="avatar">
                                 <span>{{ room?.userName }}</span>
                             </div>
                             <div class="product-time-post">
                                 <span>Thời gian đăng: </span>
                                 <span>{{ covertDate(room?.createdDate)}}</span>
+                                <i title="Lưu tin" class="fa-solid fa-heart"></i>
                             </div>
                         </div>
                         <span>{{ room.name }}</span>
@@ -62,7 +64,8 @@
                             </div>
                             <div class="home-product-img-bottom">
                                 <div class="home-product-bottom-left">
-                                    <img  v-for="image in room.images.slice(0,3)" :key="image" :src="image.url" alt="">
+                                     <span style="font-weight: bold;" v-if="room.images.length === 0">Chưa cập nhật ảnh !</span>
+                                    <img v-for="image in room.images.slice(0,3)" :key="image" :src="image.url" alt="">
                                 </div>
                                 <div class="home-product-bottom-right">
                                     <h1>Thông tin sơ lược</h1>
@@ -131,8 +134,8 @@
                 <ul class="home-filter-by-details">
                     <span>Lọc theo thời gian</span>
                     <li @click = "onFilterTime('newest')">Mới nhất</li>
+                    <li @click = "onFilterTime('oldest')">Cũ nhất</li>
                     <li @click = "onFilterTime('week')">Trong tuần</li>
-                    <li @click = "onFilterTime('hurry')">Cần cho thuê gấp</li>
                 </ul>
 
 
@@ -214,8 +217,37 @@ export default {
         }
       
 
-        watch(()=>filter.CategoryId || filter.City || filter.Price || filter.Time || filter.Level || filter.Offset || filter.Area, (newValue,oldValue)=>{
+        watch(()=> filter.Area, (newValue,oldValue)=>{
             store.dispatch("getRoomList",filter); 
+        })
+
+
+
+        watch(()=>filter.Time ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
+        })
+
+        watch(()=>filter.Offset ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
+        })
+
+
+        watch(()=>filter.Level ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
+        })
+
+
+        watch(()=>filter.Price ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
+        })
+
+        watch(()=>filter.City ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
+        })
+        
+
+        watch(()=>filter.CategoryId ,(newValue,oldValue)=>{
+             store.dispatch('getRoomList',filter)
         })
 
         watch(()=>filter.TextSearch,(newValue,oldValue)=>{
@@ -223,6 +255,14 @@ export default {
                 store.dispatch("getRoomList",filter); 
             },1500);
         })
+
+        const serverResponse = computed(()=> store.state.serverResponseData); 
+        
+        watch(()=> serverResponse.value.success,(newValue,oldValue)=>{
+                if(newValue){
+                    store.dispatch("getRoomList",filter); 
+                }
+            })
 
         const onFilterCategory = (categoryId)=>{
             filter.CategoryId = categoryId; 

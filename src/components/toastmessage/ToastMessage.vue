@@ -1,5 +1,5 @@
 <template>
-    <div v-if="toastMessage.isShow" class="toast-message-container">
+    <div v-if="toastMessage.isShow" :class="`toast-message-container ${toastMessage.type}`">
         <span :class="toastMessage.type === 'success' ? `toast-success`: `toast-error` ">{{ toastMessage.message }}</span>
     </div>
 </template>
@@ -28,16 +28,25 @@ import { useStore } from 'vuex'
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #FFFFFF;
     position: fixed;
     right: 10px;
     top: 200px;
-    border: 1px solid rgba(128, 128, 128, 0.185);
-    border-radius: 5px;
     z-index: 1000;
     transform: translateX(110%);
     animation: showToastMessage 5s linear;
+}
+
+
+.toast-message-container.success{
+    background-color: #9febad;
  }
+
+ 
+.toast-message-container.error{
+    background-color: #f3cbcb;
+ }
+
+
 
  .toast-success{
     color: green;

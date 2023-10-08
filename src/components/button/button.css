@@ -14,9 +14,54 @@
     color: white;
 }
 
+
 .btn.success:hover{
     background-color: green;
 }
+
+
+
+.btn.danger{
+    font-weight: bold;
+    background-color: rgba(255, 0, 0, 0.863);
+    color: white;
+}
+
+
+.btn.danger:hover{
+    background-color: red;
+}
+
+
+
+.btn.warning{
+    font-weight: bold;
+    background-color: rgba(255, 255, 0, 0.438);
+    color: white;
+}
+
+
+.btn.warning:hover{
+    background-color: yellow;
+}
+
+
+.btn.normal{
+    font-weight: bold;
+    color: white;
+    border: 1px solid rgba(128, 128, 128, 0.315);
+    background: none;
+    color: black;
+    margin-right: 10px;
+    transition: all 0.5s ease;
+}
+
+
+.btn.normal:hover{
+    background-color: #EEEEEE;
+}
+
+
 
 
 .btn.primary{

@@ -13,7 +13,10 @@ const store = createStore({
        link:{
          isLogin:false,
          isRegister:false,
-         isShowCreatePost:false
+         isShowCreatePost:{
+          isShow:false, 
+          type:null
+         }
        }, 
        serverResponseData:{
           success:false, 
@@ -62,14 +65,21 @@ const store = createStore({
         state.account.registerSuccess = false; 
         localStorage.removeItem('user'); 
     },
+
+    updateRoomList(state,payload){
+      const findedIndex = state.rooms.findIndex(item => item.roomId === payload.roomId); 
+      state.rooms = [...state.rooms.slice(0,findedIndex),payload,...state.rooms.slice(findedIndex + 1)];
+    },
+
     setRoomList(state,payload){
       state.rooms = payload; 
     },
     setCategoryList(state,payload){
       state.categorys = payload
     },
-    showCreatePost(state){
-      state.link.isShowCreatePost = !state.link.isShowCreatePost; 
+    showCreatePost(state,payload){
+      state.link.isShowCreatePost.isShow = !state.link.isShowCreatePost.isShow;
+      state.link.isShowCreatePost.type = payload.type;  
     },
     setUserLogin(state,payload){
       state.user = payload; 
@@ -100,13 +110,30 @@ const store = createStore({
    },
    setSingleRoom(state,payload){
       state.singleRoom = payload; 
+   },
+
+   setDeleteRoom(state,roomId){
+      state.rooms = state.rooms.filter(item => item.roomId !== roomId); 
+   },
+
+   setUpdateStatusRoom(state,roomId){
+     state.rooms = state.rooms.map(item=>{
+      if(item.roomId === roomId){
+         if(item.status === 1){
+          item.status = 0; 
+         }else {
+          item.status = 1; 
+         }
+      }
+      return item; 
+     })
    }
   },
   actions:{
     async getRoomList({commit},{Offset,Limit,TextSearch,Price,Area,City,Level,Time,CategoryId}){
       try {
         const {data} = await publicRequest.get(`/Rooms/Filter?Offset=${Offset}&Limit=${Limit}&CategoryId=${CategoryId}&TextSearch=${TextSearch}&Price=${Price}&Area=${Area}&City=${City}&Level=${Level}&Time=${Time}`); 
-        if(data.statusCode === 200){
+        if(data !== undefined && data.statusCode === 200){
           commit("setRoomList",data.data); 
         }
       } catch (error) {
@@ -116,7 +143,7 @@ const store = createStore({
     async getCategoryList({commit}){
       try {
         const {data} = await publicRequest.get('/Categorys'); 
-        if(data.statusCode === 200){
+        if(data !== undefined && data.statusCode === 200){
           commit("setCategoryList",data.data); 
         }
       } catch (error) {
@@ -140,7 +167,8 @@ const store = createStore({
        await publicRequest.post('/Users',{
         accountId: accountResponse.data.data.accountId, 
         name: payload.userName,
-        phone:payload.phone
+        phone:payload.phone,
+        avatar:'https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-250nw-1913928688.jpg'
       }) 
         commit("setRegisterSuccess",accountResponse.data); 
       } catch (error) {
@@ -170,11 +198,64 @@ const store = createStore({
     async getSingleRoom({commit},roomId){
       try {
         const {data} = await publicRequest.get(`/Rooms/${roomId}`)
-        commit('setSingleRoom',data.data); 
+        if(data !== undefined && data.statusCode === 200){
+          commit('setSingleRoom',data.data); 
+        }
       } catch (error) {
         commit('setRequestError',error.response.data)
       }
     },
+
+    async deleteImage({commit},imageId){
+      try {
+        await userRequest.delete(`/Images/${imageId}`)
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
+    async updateImage({commit},imageId){
+      try {
+        await userRequest.put(`/Rooms/UpdateImage/${imageId}`)
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
+    async updateRoom({commit},{postData,roomId}){
+      try {
+        const {data} = await userRequest.put(`/Rooms/${roomId}`,postData)
+        if(data !== undefined && data.statusCode === 200){
+            commit('updateRoomList',data.data); 
+        }
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
+    async deleteRoom({commit},roomId){
+      try {
+        const {data} = await userRequest.delete(`/Rooms/${roomId}`)
+        if(data !== undefined && data.statusCode === 200){
+            commit('setDeleteRoom',roomId); 
+        }
+      } catch (error) {
+        console.log(error);
+        // commit('setRequestError',error.response.data)
+      }
+    },
+
+    async updateStatusRoom({commit},roomId){
+      try {
+        const {data} = await userRequest.put(`/Rooms/UpdateStatus/${roomId}`)
+        if(data !== undefined && data.statusCode === 200){
+             commit('setUpdateStatusRoom',roomId); 
+        }
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
 
      
   }

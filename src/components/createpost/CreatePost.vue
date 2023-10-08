@@ -1,8 +1,9 @@
 <template>
-    <div class="form-container">
+    <div v-if="user !== null" class="form-container">
         <form @submit="onSubmitForm" >
             <div class="form-title">
-                <h1>ĐĂNG TIN MỚI</h1>
+                <h1 v-if="isShowCreatePost.type === 1">ĐĂNG TIN MỚI</h1>
+                <h1 v-if="isShowCreatePost.type === 2">CẬP NHẬT TIN</h1>
                 <i @click="onCloseForm" class="fa-solid fa-xmark"></i>
             </div>
             <div class="form-body">
@@ -88,7 +89,8 @@
                     <image-preview v-for="imageObject in imageUrlUploads" :key="imageObject" :imageObject="imageObject"/>
                 </div>               
             </div>
-            <Button type="success" name="TẠO TIN" />
+            <Button v-if="isShowCreatePost.type === 1" type="success" name="TẠO TIN" />
+            <Button v-if="isShowCreatePost.type === 2" type="success" name="SỬA TIN" />
         </form>
     </div>
 </template>
@@ -118,6 +120,7 @@ import { useRouter } from 'vue-router';
             const store = useStore(); 
             const router = useRouter(); 
             let imageUrlUploads = ref([]);  
+            const roomId = ref(null); 
             const isError = ref(false); 
             const postData = reactive({
                 name: "",
@@ -125,6 +128,7 @@ import { useRouter } from 'vue-router';
                 description: "",
                 price: "",
                 image:"",
+                fileName:"",
                 area: "",
                 address: "",
                 city:"",
@@ -154,9 +158,15 @@ import { useRouter } from 'vue-router';
 
 
             const onCloseForm = ()=>{
-                store.commit("showCreatePost"); 
+                store.commit("showCreatePost",{
+                    type:null
+                }); 
                 store.commit('hiddenOverlay')
             }
+
+            const isShowCreatePost = computed(()=> store.state.link.isShowCreatePost)
+            const imageObjectRemove = computed(()=>store.state.imageObjectRemove); 
+
 
             const validateForm = ()=>{
                     if(validateIsEmpty(postData.name)){
@@ -194,12 +204,12 @@ import { useRouter } from 'vue-router';
                         isError.value = true;
                     }
 
-                    if(validateIsEmpty(postData.area)){
+                    if(validateIsEmpty(postData.area.toString())){
                         error.area = "Diện tích không được để trống"
                         isError.value = true;
                     }
 
-                    if(validateIsEmpty(postData.level)){
+                    if(validateIsEmpty(postData.level.toString())){
                         error.level = "Tình trạng phòng không được để trống"
                         isError.value = true;
                     }
@@ -217,6 +227,20 @@ import { useRouter } from 'vue-router';
                     postData.price = parseFloat(postData.price); 
                     postData.level = parseInt(postData.level);
                     postData.area = parseInt(postData.area); 
+
+                    if(isShowCreatePost?.value?.type === 2){
+                        store.dispatch('updateRoom',{postData,roomId:roomId.value});
+
+                        store.commit('showToastMessage',{
+                        isShow:true,
+                        message:"Cập nhật tin thành công !", 
+                        type :"success"
+
+                        })
+                        onCloseForm(); 
+                        return;
+                    }
+
                     store.dispatch('createPost',postData)
                 } catch (error) {
                     console.log(error);
@@ -241,15 +265,17 @@ import { useRouter } from 'vue-router';
             })
 
             const onImageFileChange = (event)=>{
+                postData.image = "";
                 const file = event.target.files[0];
-                const fileName =`images/${uuidv4()}-${file.name}`; 
+                const fileName =`images/${uuidv4()}-${file?.name}`; 
                 const storageRef = refStorage(storage,fileName); 
                 uploadBytes(storageRef,file).then((snapshot)=>{
                     getDownloadURL(refStorage(storage,fileName)).then(downloadUrl => {
                         postData.image = downloadUrl
+                        postData.fileName = fileName; 
                         imageUrlUploads.value.push({
                             url:downloadUrl,
-                            path:fileName
+                            path:fileName,
                         });
                        
                     })
@@ -264,7 +290,7 @@ import { useRouter } from 'vue-router';
                     const storageRef = refStorage(storage,fileName); 
                     uploadBytes(storageRef,file).then((snapshot)=>{
                         getDownloadURL(refStorage(storage,fileName)).then(downloadUrl =>{
-                            postData.subImages.push(downloadUrl)
+                            postData.subImages.push(`${downloadUrl}@-@${fileName}`)
                             imageUrlUploads.value.push({
                             url:downloadUrl,
                             path:fileName
@@ -273,23 +299,59 @@ import { useRouter } from 'vue-router';
                     })
                 }
             }
+        
+            
+            
+            store.dispatch("getCategoryList"); 
 
-            const imageObjectRemove = computed(()=>store.state.imageObjectRemove); 
+            if(isShowCreatePost?.value?.type === 2){
+                const singleRoom = computed(()=> store.state.singleRoom)
+                watch(()=> singleRoom.value,(newValue,oldValue)=>{
+                    roomId.value = newValue.roomId; 
+                    postData.name = newValue.name;
+                    postData.description = newValue.description; 
+                    postData.address = newValue.address; 
+                    postData.image = newValue.image;
+                    postData.city = newValue.city; 
+                    postData.categoryId = newValue.categoryId; 
+                    postData.level = newValue.level; 
+                    postData.price = newValue.price; 
+                    postData.area = newValue.area;
+                    imageUrlUploads.value.push({
+                        url:newValue.image,
+                        path:newValue.fileName
+                    })            
+                    newValue.images.forEach(item=>{
+                        imageUrlUploads.value.push({
+                            url:item.url,
+                            path:item.fileName,
+                            imageId: item.imageId
+                        })
+                        postData.subImages.push(`${item.url}@-@${item.fileName}`) 
+                    })
+                    
+                })
+            }
 
             watch(()=>imageObjectRemove.value,async(newValue,oldValue)=>{
                 const imageRef = refStorage(storage,newValue.path);  
                 deleteObject(imageRef).then(()=>{                  
-                    console.log('delete successfully !'); 
+                    console.log('delete successfully !');
                     imageUrlUploads.value = imageUrlUploads.value.filter(item=> item.path !== newValue.path); 
-
                     if(newValue.url === postData.image){
                         postData.image = ""
                     }
-                    postData.subImages = postData.subImages.filter(item => item !== newValue.url); 
+                    postData.subImages = postData.subImages?.filter(item => item.split('@-@')[0] !== newValue.url); 
+                    if(isShowCreatePost?.value?.type === 2){
+                        if(newValue.imageId === undefined){    
+                            store.dispatch('updateImage',roomId.value);  
+                            return; 
+                        }
+                        store.dispatch('deleteImage',newValue.imageId);
+                    }
                 })   
               
             })
-            store.dispatch("getCategoryList"); 
             return {
                 onCloseForm,
                 categorys:computed(()=> store.state.categorys),
@@ -298,7 +360,9 @@ import { useRouter } from 'vue-router';
                 onImageFileChange,
                 handleSubListImageChange,
                 imageUrlUploads,
-                error
+                error,
+                isShowCreatePost,     
+                user:computed(()=> store.state.user)   
             }
         }
 

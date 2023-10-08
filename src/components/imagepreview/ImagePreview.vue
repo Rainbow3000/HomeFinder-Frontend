@@ -1,5 +1,5 @@
 <template>
-    <div class="image-preview-container">
+    <div v-if="imageObject.url !== ''" class="image-preview-container">
         <i @click="onRemoveImage" class="fa-solid fa-xmark"></i>
         <img :src="imageObject.url" alt="">
     </div>

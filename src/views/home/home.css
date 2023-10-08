@@ -192,6 +192,17 @@
     margin-right: 10px;
 }
 
+.product-time-post i{
+    margin-left: 20px;
+    cursor: pointer;
+    color: rgba(128, 128, 128, 0.452);
+    transition: all 0.5s linear;
+}
+
+.product-time-post i:hover{
+   color: red;
+}
+
 
 
 .home-product-bottom-right{

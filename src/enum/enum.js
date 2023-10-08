@@ -9,5 +9,16 @@ const AreaEnum = {
     6:"Trên 200 m2"
 }
 
+const StatusEnum = {
+    0:"Đã ẩn tin",
+    1:"Đang hoạt động"
+}
 
-export {AreaEnum}
+const LevelEnum = {
+    1:"Cao cấp",
+    2:"Đầy đủ",
+    3:"Nhà trống"
+}
+
+
+export {AreaEnum,StatusEnum,LevelEnum}

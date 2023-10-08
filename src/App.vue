@@ -4,7 +4,7 @@
        </div>
        <Login v-if="isLogin"/> 
        <Register v-if="isRegister"/> 
-       <CreatePostVue v-if="isShowCreatePost"/>
+       <CreatePostVue v-if="isShowCreatePost.isShow"/>
        <Overlay v-if="isShowOverlay"/>
        <navbar></navbar>
        <RouterView/>

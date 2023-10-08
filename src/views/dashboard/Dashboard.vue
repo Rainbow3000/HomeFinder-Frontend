@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-container">
+    <div v-if="user !== null" class="dashboard-container">
         <div class="dashboard-left">
             <h1>Quản trị</h1>
             <ul>
@@ -42,6 +42,7 @@
             return {
                 componentNumber,
                 handleChangeComponent,
+                user:computed(()=> store.state.user)   
             }
         },
 

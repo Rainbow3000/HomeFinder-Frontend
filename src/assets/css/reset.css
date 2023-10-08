@@ -11,7 +11,7 @@ small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
+caption, tfoot,
 article, aside, canvas, details, embed, 
 figure, figcaption, footer, header, hgroup, 
 menu, nav, output, ruby, section, summary,
@@ -21,7 +21,6 @@ time, mark, audio, video {
 	border: 0;
 	font-size: 100%;
 	font-family: 'Space Grotesk', sans-serif;;
-	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -58,3 +57,4 @@ table {
 	color: inherit;
 	text-decoration: none;
 }
+
