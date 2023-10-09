@@ -219,15 +219,15 @@ const store = createStore({
         const accountResponse = await publicRequest.post('/Accounts/Register',{
           email:payload.email,
           password:payload.password
-      });     
-       await publicRequest.post('/Users',{
-        accountId: accountResponse.data.data.accountId, 
-        name: payload.userName,
-        phone:payload.phone,
-        avatar:'https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-250nw-1913928688.jpg'
-      }) 
-        commit('resetError'); 
+        });     
+        await publicRequest.post('/Users/Update',{
+          accountId: accountResponse.data.data.accountId, 
+          name: payload.userName,
+          phone:payload.phone,
+          avatar:'https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-250nw-1913928688.jpg'
+        }) 
         commit("setRegisterSuccess",accountResponse.data); 
+        commit('resetError'); 
       } catch (error) {
         commit('setRequestError',error.response.data)
       }

@@ -50,7 +50,7 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
             Area:0,
             City:"",
             Offset:0,
-            Limit:10,
+            Limit:5,
             TextSearch:"",
             Level:0,
             Time:"",

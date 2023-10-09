@@ -100,24 +100,6 @@
                     >
                     </paginate>
                 </div>
-
-        <div class="home-post-relation">
-            <h1>Các bài viết liên quan:</h1>
-            <div class="home-post-container">
-                <div class="home-post-item">
-                    <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
-                    <ul>
-                        <li>CHUNG CƯ MINI LẠC LONG QUÂN 40M2</li>
-                        <li>Diện tích: 45 m² - 1 PN</li>
-                        <li>Giá: <span style="color: red;">6,5 triệu/tháng</span></li>
-                    </ul>
-
-                </div>
-
-              
-
-            </div>
-        </div>
                 
             </div>
             <div class="home-main-right">
@@ -166,7 +148,7 @@ export default {
             Area:0,
             City:"",
             Offset:0,
-            Limit:10,
+            Limit:5,
             TextSearch:"",
             Level:0,
             Time:"",
