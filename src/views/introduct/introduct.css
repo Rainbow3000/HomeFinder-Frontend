@@ -1,0 +1,22 @@
+.introduct-container{
+    position: relative;
+    top: 120px;
+    width: 1300px;
+    height: auto;
+    min-height: 500px;
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.introduct-container h1{
+    font-size: 18px;
+}
+
+.introduct-container ul{
+    width: 100%; 
+}
+
+.introduct-container ul li{
+    margin-top: 20px;
+}

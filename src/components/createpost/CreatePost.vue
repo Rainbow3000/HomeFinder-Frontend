@@ -152,7 +152,7 @@ import { useRouter } from 'vue-router';
             }); 
 
 
-            const serverResponse = computed(()=> store.state.serverResponseData); 
+            const roomResponseData = computed(()=> store.state.serverResponseData.room) 
 
           
 
@@ -230,7 +230,6 @@ import { useRouter } from 'vue-router';
 
                     if(isShowCreatePost?.value?.type === 2){
                         store.dispatch('updateRoom',{postData,roomId:roomId.value});
-
                         store.commit('showToastMessage',{
                         isShow:true,
                         message:"Cập nhật tin thành công !", 
@@ -240,7 +239,6 @@ import { useRouter } from 'vue-router';
                         onCloseForm(); 
                         return;
                     }
-
                     store.dispatch('createPost',postData)
                 } catch (error) {
                     console.log(error);
@@ -248,7 +246,7 @@ import { useRouter } from 'vue-router';
                 
             }
             
-            watch(()=> serverResponse.value.success,(newValue,oldValue)=>{
+            watch(()=> roomResponseData.value.success,(newValue,oldValue)=>{
                 if(newValue){
                    onCloseForm(); 
                    store.commit('showToastMessage',{

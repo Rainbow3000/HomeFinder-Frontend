@@ -1,5 +1,6 @@
 <template>
     <div class="details-container">
+        {{ singleRoom }}
         <h1 class="details-title">Xem chi tiết phòng</h1>
         <span class="details-home-name">{{ singleRoom?.name }}</span>
         <div class="details-main">
@@ -17,13 +18,12 @@
             <div class="details-main-right">
                     <div class="details-main-right-top">
                         <div class="details-main-avatar">
-                            <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                            <img :src="singleRoom?.avatar" alt="">
                             <span>{{ singleRoom?.userName }}</span>
                           
                         </div>
                         <div class="details-main-info">
                             <ul>
-                                <li><i class="fa-regular fa-user"></i> Giới tính: <strong>Nam</strong></li>
                                 <li><i class="fa-solid fa-mobile-screen"></i> Di động: <strong>{{ singleRoom?.phoneNumber }}</strong></li>
                               
                                 <li>
@@ -42,29 +42,29 @@
                     </div>
             </div>
         </div>
-
+       
         <div class="details-description">
             <div class="details-description-top">
                 <h1>Mô tả chi tiết:</h1>
-                <i class="fa-regular fa-heart"></i>
+                <i @click="onAddFavourite(singleRoom)" title="Lưu tin" class="fa-solid fa-heart heart-details" :class="farvourite?.[singleRoom.roomId] !== undefined ? 'favourite':''"></i>
             </div>
             <p class="details-description-body">
                 <ul>
-                    <li v-for="desc in singleRoom?.description?.split('<br/>')" :key="desc" >{{ desc }}</li>
+                    <li v-for="desc in singleRoom?.description?.split('/n')" :key="desc" >{{ desc }}</li>
                 </ul>
               </p>
             
         </div>
 
         <div class="details-user-post">
-           <h1> Danh sách các phòng của Nguyễn Văn A:</h1>
+           <h1> Một số tin có liên quan của <span style="color:green">{{singleRoom?.userName}}</span>:</h1>
             <div class="details-post-container">
-                <div class="details-post-item">
-                    <img src="https://cdn.chotot.com/oqMyXcjHFMRUtEuAoTrwvbl_xZ8itnv2VjU-13ScV0M/preset:view/plain/6625fdc2847ac49149e2d3ec1b675441-2827249207307476704.jpg" alt="">
+                <div v-for="room in rooms" :key="room" class="details-post-item">
+                    <img :src="room.image" alt="">
                     <ul>
-                        <li>CHUNG CƯ MINI LẠC LONG QUÂN 40M2</li>
-                        <li>Diện tích: 45 m² - 1 PN</li>
-                        <li>Giá: <span style="color: red;">6,5 triệu/tháng</span></li>
+                        <li>{{ room.name }}</li>
+                        <li>Diện tích: {{ AreaEnum[room.area] }}</li>
+                        <li>Giá: <span style="color: red;">{{ convertToVND(room.price) }} </span><span> / tháng</span></li>
                     </ul>
 
                 </div>
@@ -78,9 +78,9 @@
     import Button from '@/components/button/Button.vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import {AreaEnum} from '@/enum/enum.js'
-import {convertToVND} from '@/helper/helper'
+import {convertToVND, resetToastMessage} from '@/helper/helper'
     export default{
         components:{
             TButton:Button
@@ -90,12 +90,28 @@ import {convertToVND} from '@/helper/helper'
             const route = useRoute();
             const roomId = route.params.id; 
             const store = useStore(); 
-            store.dispatch('getSingleRoom',roomId); 
+            store.dispatch('getSingleRoom',roomId);  
+            const singleRoom = computed(()=> store.state.singleRoom)
+            watch(()=> singleRoom.value,(newValue,oldValue)=>{
+                store.dispatch("getRoomByUser",newValue.accountId); 
+            })
 
+            const onAddFavourite = (room)=>{
+            store.commit('setFavouriteRoom',room); 
+            store.commit('showToastMessage',{
+                isShow:true,
+                message:"Cập nhật lưu tin thành công !", 
+                type :"success"
+            })
+            resetToastMessage(store); 
+        }
             return {
                 singleRoom : computed(()=> store.state.singleRoom),
                 AreaEnum,
-                convertToVND
+                convertToVND,
+                rooms : computed(()=> store.state.rooms),
+                onAddFavourite,
+                farvourite:computed(()=> store.state.farvouriteRooms)
             }
         }
 

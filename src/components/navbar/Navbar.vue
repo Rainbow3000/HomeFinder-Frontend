@@ -8,8 +8,10 @@
                 <li @click="onShowDashBoard">
                         Quản Lý Tin
                 </li>
-                <li>Tin Tức</li>
-                <li>Hướng Dẫn</li>
+                <!-- <li>Tin Tức</li> -->
+                <router-link  class="link" to="/introduct">
+                    <li>Hướng Dẫn</li>
+                </router-link>
             </ul>
         </div>
 
@@ -18,14 +20,26 @@
                 <i class="fa-regular fa-user"></i>
                 <span style="color: green;"> {{ user.userName }}</span>
             </div>
-            <div class="navbar-icon">
+            <div class="navbar-icon nav-favourite">
                 <i class="fa-regular fa-heart"></i>
-                <span>Tin Đã Lưu</span>
+                <span>Tin Đã Lưu ({{ Object.keys(farvourite).length }})</span>
+                <div class="favourite-container">
+                    <span class="favourite-news-empty" v-if=" Object.keys(farvourite).length  === 0">Chưa lưu tin !</span>
+                    <div v-for="f in farvourite" :key="f" class="favourite-item">
+                        <router-link class="link favourite-link"  :to="'/details/' + f.roomId ">
+                            <div>
+                                <span class="favourite-name">{{ f.name}} </span> 
+                                <img :src="f.image" alt="">             
+                            </div>
+                            <i @click="onRemoveFavourite(f)" class="fa-solid fa-xmark"></i>
+                        </router-link>
+                    </div>
+                </div>
             </div>
-            <div class="navbar-icon">
+            <!-- <div class="navbar-icon">
                 <i class="fa-regular fa-bell"></i>
                 <span>Thông Báo</span>
-            </div>
+            </div> -->
             <div v-if="user === null" class="navbar-icon">
                 <i class="fa-regular fa-user"></i>
                 <span @click="onLoginForm">Đăng Nhập</span>
@@ -100,22 +114,33 @@ export default {
                 resetToastMessage(store); 
                 return; 
             }
-
             router.push({path:'/dashboard'})
         }    
 
         const onLogout = ()=>{
             store.commit("logout");
-            resetToastMessage(store); 
+            resetToastMessage(store);
+            store.commit('showToastMessage',{
+                        isShow:true,
+                        message:"Đăng xuất tài khoản thành công !", 
+                        type :"error"
+                })
+            router.push({path:'/'})
         }
-        
+
+        const onRemoveFavourite = (room)=>{
+            store.commit('setFavouriteRoom',room); 
+        }
+
         return {
             onLoginForm,
             onRegisterForm,
             onShowCreatePost,
             onLogout,
             onShowDashBoard,
-            user:computed(()=> store.state.user)
+            user:computed(()=> store.state.user),
+            farvourite: computed(()=> store.state.farvouriteRooms),
+            onRemoveFavourite
         }
     }
 }
@@ -125,6 +150,7 @@ export default {
 
 <style scoped>
 
+@import url('./navbar.css');
 
 .navbar-logo{
     display: flex;
@@ -201,6 +227,7 @@ export default {
     margin-left: 20px;
     cursor: pointer;
 }
+
 
 
 .navbar-icon i{

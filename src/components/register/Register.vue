@@ -5,32 +5,33 @@
             <i @click="onCloseRegisterForm" class="fa-solid fa-xmark"></i>
         </div>
         <form @submit="onSubmitForm">
+            <span style="color: red;margin-top: 5px;" >{{ accountError.text }}</span>
             <div class="input-container">
                 <label for="">Tên người dùng <span style="color: red;">(*)</span></label>
                 <span style="color:red">{{ error.userName }}</span>
-                <input v-model="userData.userName" type="text" placeholder="Tên ">
+                <input @input="handleNameInputChange" :class="error.userName.trim().length > 0 && `field-error`" v-model="userData.userName" type="text" placeholder="Tên ">
             </div>
 
             <div class="input-container">
                 <label for="">Số điện thoại <span style="color: red;">(*)</span></label>
                 <span style="color:red">{{ error.phone }}</span>
-                <input v-model="userData.phone" type="text" placeholder="Số điện thoại ">
+                <input @input="handlePhoneInputChange" :class="error.phone.trim().length > 0 && `field-error`" v-model="userData.phone" type="text" placeholder="Số điện thoại ">
             </div>
             <div class="input-container">
                 <label for="">Email <span style="color: red;">(*)</span></label>
                 <span style="color:red">{{ error.email }}</span>
-                <input v-model="userData.email" type="email" placeholder="Email">
+                <input @input="handleEmailInputChange" :class="error.email.trim().length > 0 && `field-error`" v-model="userData.email" type="email" placeholder="Email">
             </div>
             <div class="input-container">
                 <label for="">Mật khẩu <span style="color: red;">(*)</span></label>
                 <span style="color:red">{{ error.password }}</span>
-                <input v-model="userData.password" type="password" placeholder="Mật khẩu">
+                <input @input="handlePasswordInputChange" :class="error.password.trim().length > 0 && `field-error`" v-model="userData.password" type="password" placeholder="Mật khẩu">
             </div>
 
             <div class="input-container">
                 <label for="">Nhập lại mật khẩu <span style="color: red;">(*)</span></label>
                 <span style="color:red">{{ error.rePassword }}</span>
-                <input v-model="userData.rePassword" type="password" placeholder="Nhập lại mật khẩu">
+                <input @input="handleRePasswordInputChange" :class="error.rePassword.trim().length > 0 && `field-error`" v-model="userData.rePassword" type="password" placeholder="Nhập lại mật khẩu">
             </div>
 
 
@@ -81,7 +82,8 @@ import { reactive, computed , watch, ref } from 'vue';
             })
             const onCloseRegisterForm = ()=>{
                 store.commit('registerLink'); 
-                store.commit('hiddenOverlay')
+                store.commit('hiddenOverlay');
+                store.commit('resetError');
             }
 
             const validateForm = ()=>{
@@ -142,6 +144,39 @@ import { reactive, computed , watch, ref } from 'vue';
                 } 
             }
 
+            const accountError = computed(()=> store.state.error.account);
+
+            const handleNameInputChange = ()=>{
+                error.userName = "";
+                
+
+            }
+            const handlePhoneInputChange = ()=>{
+                error.phone = "";
+                
+
+            }
+
+
+            const handleEmailInputChange = ()=>{
+                error.email = ""
+                
+
+            }
+
+            const handlePasswordInputChange = ()=>{
+                error.password = ""; 
+                
+
+            }
+
+            const handleRePasswordInputChange = ()=>{
+                error.rePassword =""
+                
+
+            }
+
+
           
             const onSubmitForm = (event)=>{
                 event.preventDefault();
@@ -170,7 +205,13 @@ import { reactive, computed , watch, ref } from 'vue';
                 onCloseRegisterForm,
                 onSubmitForm,
                 error,
-                userData
+                userData,
+                accountError,
+                handleNameInputChange,
+                handlePhoneInputChange,
+                handleEmailInputChange,
+                handlePasswordInputChange,
+                handleRePasswordInputChange
             }
 
         }
@@ -180,6 +221,13 @@ import { reactive, computed , watch, ref } from 'vue';
 
 <style scoped>
 
+.input-container input:focus{
+    border: 1px solid rgba(0, 128, 0, 0.562);
+}
+
+.field-error{
+    border: 1px solid red !important;
+}
 
 .social-container{
     display: flex;

@@ -19,9 +19,11 @@ const store = createStore({
          }
        }, 
        serverResponseData:{
-          success:false, 
-          error:false,
-          data:null
+          room:{
+            success:false,
+            error:false,
+            data:null
+          },
        },
        toastMessage:{
           isShow:false, 
@@ -33,10 +35,52 @@ const store = createStore({
        singleRoom:null,
        categorys:[],
        imageObjectRemove:null,
+       userInfo:null,
+       pageSize:0,
+       error:{
+          account:{
+            text:"",
+            statusCode:""
+          }
+       },
+
+      farvouriteRooms: localStorage.getItem('room-favourite') !== null ? JSON.parse(localStorage.getItem('room-favourite')) : {}
+      
     }
   },
   mutations: {
 
+
+
+    setFavouriteRoom(state,payload){
+      const favouriteItem = state.farvouriteRooms[payload.roomId]; 
+      if(favouriteItem !== undefined){
+        delete state.farvouriteRooms[favouriteItem.roomId]; 
+        localStorage.setItem('room-favourite',JSON.stringify(state.farvouriteRooms));
+        return;
+      }
+      state.farvouriteRooms[payload.roomId] = payload;
+      localStorage.setItem('room-favourite',JSON.stringify(state.farvouriteRooms)); 
+    },
+
+    setRoomResponseData(state,payload){
+      state.serverResponseData.room = payload; 
+    },
+
+    resetRequestState(state){
+      state.serverResponseData = {
+        room:{
+          success:false,
+          error:false,
+          data:null
+        },
+     }
+    },
+
+    resetError(state){
+      state.error.account.text = "";
+      state.error.account.statusCode = ""; 
+    },
     setPathUrlRemove(state,payload){
       state.imageObjectRemove = payload; 
     },
@@ -97,17 +141,6 @@ const store = createStore({
        state.serverResponseData.error = true; 
        state.serverResponseData.data = payload
     },
-
-    setRequestSuccess(state,payload){
-      state.serverResponseData.success = true; 
-      state.serverResponseData.data = payload
-   },
-
-   resetRequestState(state){
-      state.serverResponseData.error = false; 
-      state.serverResponseData.success = false;
-      state.serverResponseData.data = null; 
-   },
    setSingleRoom(state,payload){
       state.singleRoom = payload; 
    },
@@ -115,7 +148,13 @@ const store = createStore({
    setDeleteRoom(state,roomId){
       state.rooms = state.rooms.filter(item => item.roomId !== roomId); 
    },
+   setUserInfo(state,payload){
+    state.userInfo =  payload; 
+   },
 
+   setPageSize(state,pageSize){
+    state.pageSize = pageSize; 
+   },
    setUpdateStatusRoom(state,roomId){
      state.rooms = state.rooms.map(item=>{
       if(item.roomId === roomId){
@@ -127,6 +166,11 @@ const store = createStore({
       }
       return item; 
      })
+   },
+
+   setAccountError(state,payload){
+      state.error.account.text = payload.Message; 
+      state.error.account.statusCode = payload.statusCode;
    }
   },
   actions:{
@@ -140,6 +184,18 @@ const store = createStore({
         commit('setRequestError',error.response.data)
       }
     },
+
+    async getRoomByUser({commit},accountId){
+      try {
+        const {data} = await publicRequest.get(`/Rooms/GetByUser/${accountId}`); 
+        if(data !== undefined && data.statusCode === 200){
+          commit("setRoomList",data.data); 
+        }
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
     async getCategoryList({commit}){
       try {
         const {data} = await publicRequest.get('/Categorys'); 
@@ -155,7 +211,7 @@ const store = createStore({
         const {data} = await publicRequest.post('/Accounts/Login',payload);
         commit("setUserLogin",data.data); 
       } catch (error) {
-        commit('setRequestError',error.response.data)
+        commit('setAccountError',error.response.data)
       }
     },
     async userRegister({commit},payload){
@@ -170,6 +226,7 @@ const store = createStore({
         phone:payload.phone,
         avatar:'https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-250nw-1913928688.jpg'
       }) 
+        commit('resetError'); 
         commit("setRegisterSuccess",accountResponse.data); 
       } catch (error) {
         commit('setRequestError',error.response.data)
@@ -186,9 +243,12 @@ const store = createStore({
     async createPost({commit},payload){
       try {
          const {data} =  await userRequest.post('/Rooms',payload);     
-         console.log('aaa',data);  
          if(data.statusCode === 201){
-           commit('setRequestSuccess',data)
+          commit('setRoomResponseData',{
+            success:true,
+            error:false,
+            data:null
+          })
         }
       } catch (error) {
         commit('setRequestError',error.response.data)
@@ -203,6 +263,17 @@ const store = createStore({
         }
       } catch (error) {
         commit('setRequestError',error.response.data)
+      }
+    },
+
+    async getPageSizeRoom({commit}){
+      try {
+        const {data} = await publicRequest.get(`/Rooms/PageSize`);
+        if(data !== undefined && data.statusCode === 200){
+          commit('setPageSize',data.data); 
+        }
+      } catch (error) {
+        
       }
     },
 
@@ -238,6 +309,11 @@ const store = createStore({
         const {data} = await userRequest.delete(`/Rooms/${roomId}`)
         if(data !== undefined && data.statusCode === 200){
             commit('setDeleteRoom',roomId); 
+            commit('setRoomResponseData',{
+              success:true,
+              error:false,
+              data:null
+            })
         }
       } catch (error) {
         console.log(error);
@@ -256,6 +332,28 @@ const store = createStore({
       }
     },
 
+    async getUserInfo ({commit},accountId){
+      try {
+        const {data} = await userRequest.get(`/Users/${accountId}`)
+        if(data !== undefined && data.statusCode === 200){
+          commit('setUserInfo',data.data); 
+     }
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    },
+
+    async updateUserInfo({commit},{userData,accountId}){
+      try {
+        const {data} = await userRequest.put(`/Users/${accountId}`,userData)
+        if(data !== undefined && data.statusCode === 200){
+          console.log('data',data.data);
+          commit('setUserInfo',data.data); 
+     }
+      } catch (error) {
+        commit('setRequestError',error.response.data)
+      }
+    }
 
      
   }

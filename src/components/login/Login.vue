@@ -5,6 +5,7 @@
             <i @click="onCloseLoginForm" class="fa-solid fa-xmark"></i>
         </div>
         <form @submit="onSubmitForm">
+            <span style="color: red;margin-top: 5px;" >{{ accountError.text }}</span>
             <div class="input-container">
                 <label for="">Email <span style="color: red;">(*)</span></label>
                 <span style="color: red;">{{ error.email }}</span>
@@ -56,7 +57,8 @@ import { resetToastMessage } from '@/helper/helper';
             }) ;
             const onCloseLoginForm = ()=>{
                 store.commit('loginLink'); 
-                store.commit('hiddenOverlay')
+                store.commit('hiddenOverlay');
+                store.commit('resetError');
             }
 
             const handleEmailInputChange = ()=>{
@@ -122,6 +124,7 @@ import { resetToastMessage } from '@/helper/helper';
                 handleEmailInputChange,
                 handlePasswordInputChange,
                 isLoginSuccess,
+                accountError:computed(()=> store.state.error.account)
               
             }
         }
@@ -131,6 +134,10 @@ import { resetToastMessage } from '@/helper/helper';
 
 <style scoped>
 
+
+.input-container input:focus{
+    border: 1px solid rgba(0, 128, 0, 0.562);
+}
 
 .social-container{
     display: flex;
@@ -216,7 +223,7 @@ import { resetToastMessage } from '@/helper/helper';
     margin-top: 10px;
     height: 35px;
     outline: none;
-    border: 1px solid rgba(128, 128, 128, 0.432);
+    border: 0.5px solid rgba(128, 128, 128, 0.432);
     padding-left: 10px;
     border-radius: 5px;
  }

@@ -35,9 +35,9 @@
 
 <script>
 import { useStore} from 'vuex'
-import { computed,reactive} from 'vue';
+import { computed,reactive, watch} from 'vue';
 import Button from '../button/Button.vue';
-import { resetToastMessage } from '@/helper/helper';
+import { resetRequestState, resetToastMessage } from '@/helper/helper';
 import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
    export default {
     components:{
@@ -56,7 +56,8 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
             Time:"",
             CategoryId:""
           }) 
-        store.dispatch("getRoomList",filter)
+        store.dispatch("getRoomByUser",JSON.parse(localStorage.getItem('user')).accountId); 
+      
         const onUpdatePost = (roomId)=>{
           store.dispatch('getSingleRoom',roomId); 
           store.commit("showCreatePost",{
@@ -66,13 +67,30 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
         }
 
         const onDeletePost = (roomId)=>{
-          store.dispatch('deleteRoom',roomId); 
-          store.commit('showToastMessage',{
-              isShow:true,
-              message:"Xóa tin thành công !", 
-              type :"success"
+          store.dispatch('deleteRoom',roomId);
+      
+          const roomResponseData = computed(()=> store.state.serverResponseData.room)
+
+          watch(()=> roomResponseData.value.success,(newValue,oldValue)=>{
+            if(newValue){
+              store.commit('showToastMessage',{
+                isShow:true,
+                message:"Xóa tin thành công !", 
+                type :"success"
+            })
+            }else{
+              store.commit('showToastMessage',{
+                isShow:true,
+                message:roomResponseData.value.data, 
+                type :"error"
+            })
+
+            resetToastMessage(store); 
+            resetRequestState(store); 
+            }
           })
-          resetToastMessage(store); 
+          
+    
         }
 
         const onUpdateStatusPost = (roomId)=>{
@@ -88,6 +106,7 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
 
       return {
         rooms : computed(()=> store.state.rooms),
+        roomResponseData: computed(()=> store.serverResponseData.room),
         onUpdatePost,
         onDeletePost,
         onUpdateStatusPost,

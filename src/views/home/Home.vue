@@ -37,7 +37,7 @@
 
         <div class="home-category">
             <ul>
-                <li class="active">Tất cả</li>
+                <li @click="onFilterAllCategory" class="active">Tất cả</li>
                 <li v-for="category in categorys" :key="category.categoryId" @click="onFilterCategory(category.categoryId)" >{{ category.name}} ({{ category.quantity }})</li>
             </ul>
         </div>
@@ -53,8 +53,9 @@
                             </div>
                             <div class="product-time-post">
                                 <span>Thời gian đăng: </span>
+                    
                                 <span>{{ covertDate(room?.createdDate)}}</span>
-                                <i title="Lưu tin" class="fa-solid fa-heart"></i>
+                                <i @click="onAddFavourite(room)" title="Lưu tin" class="fa-solid fa-heart" :class="farvourite?.[room.roomId] !== undefined ? 'favourite':''"></i>
                             </div>
                         </div>
                         <span>{{ room.name }}</span>
@@ -78,9 +79,7 @@
                                             <li><i class="fa-solid fa-phone room-info-icon"></i> Số điện thoại:  <strong>{{ room.phoneNumber }}</strong></li>
                                             <li><router-link :to="'/details/' + room.roomId" ><Button type="success" name="Xem chi tiết"></Button></router-link></li>      
                                         </ul>
-                                        <div class="product-favourite">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </div>
+                                       
                                     </div>
                     </div>
                             </div>
@@ -91,23 +90,15 @@
              
 
                 <div class="home-pagination">
-                    <ul>
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                    </ul>
-
-                    <ul>
-                        <li>4</li>
-                        <li>5</li>
-                        <li>6</li>
-                    </ul>
-
-                    <ul>
-                        <li>7</li>
-                        <li>8</li>
-                        <li>9</li>
-                    </ul>
+                    <paginate
+                    :page-count="pageSize"
+                    :page-range="10"
+                    :click-handler="onPagingChange"
+                    :prev-text="'Trước'"
+                    :next-text="'Sau'"
+                    :container-class="'pagination'"
+                    >
+                    </paginate>
                 </div>
 
         <div class="home-post-relation">
@@ -165,9 +156,10 @@ import Button from '@/components/button/Button.vue';
 import { computed, reactive, ref,watch } from 'vue';
 import { useStore } from 'vuex';
 import {AreaEnum} from '@/enum/enum.js'
-import {convertToVND,covertDate} from '@/helper/helper'
+import {convertToVND,covertDate, resetToastMessage} from '@/helper/helper'
+import Paginate from "vuejs-paginate-next";
 export default {
-    components: { Button },
+    components: { Button,Paginate },
     setup(){
         const filter = reactive({
             Price:"",
@@ -267,6 +259,31 @@ export default {
         const onFilterCategory = (categoryId)=>{
             filter.CategoryId = categoryId; 
         }
+
+        const onPagingChange = (pageNumber)=>{
+            filter.Offset = filter.Limit * pageNumber; 
+        }
+
+
+        const onFilterAllCategory = ()=>{
+            store.dispatch("getRoomList",filter); 
+        }
+
+        const onAddFavourite = (room)=>{
+            store.commit('setFavouriteRoom',room); 
+            store.commit('showToastMessage',{
+                isShow:true,
+                message:"Cập nhật lưu tin thành công !", 
+                type :"success"
+            })
+
+            resetToastMessage(store); 
+        }
+
+
+        store.dispatch('getPageSizeRoom');
+
+
         return {
             categorys:computed(()=> store.state.categorys), 
             rooms:computed(()=> store.state.rooms),
@@ -283,7 +300,12 @@ export default {
             onFilterLevel,
             filter,
             onFilterCategory,
-            covertDate
+            covertDate,
+            onPagingChange,
+            pageSize:computed(()=> store.state.pageSize),
+            onFilterAllCategory,
+            onAddFavourite,
+            farvourite:computed(()=> store.state.farvouriteRooms)
         }
     }
 }

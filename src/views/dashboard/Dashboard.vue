@@ -11,6 +11,7 @@
         <div class="dashboard-right">
             <Charts v-if="componentNumber === 0"/>
             <PostList v-if="componentNumber === 1"/>
+            <UserInfo v-if="componentNumber === 2" />
         </div>
     </div>
 </template>
@@ -20,18 +21,22 @@
 <script>
     import Charts from "@/components/charts/Charts.vue";
     import PostList from '@/components/postList/PostList.vue';
+    import UserInfo from '@/components/userinfo/UserInfo.vue';
     import { ref,computed } from 'vue';
     import {useStore } from "vuex";
+import { useRouter } from 'vue-router';
     export default{
         components:{
             Charts,
-            PostList
+            PostList,
+            UserInfo
         },
 
         setup() {
           
             const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
-            const store = useStore();    
+            const store = useStore();
+            const router = useRouter();
             localStorage.setItem('component',0); 
 
             const handleChangeComponent = (number)=>{
@@ -39,10 +44,16 @@
                 localStorage.setItem('component',number); 
             }
 
+            const user = computed(()=> store.state.user)
+
+            if(user.value === null){
+                router.push({path:'/'})
+            }
+
             return {
                 componentNumber,
                 handleChangeComponent,
-                user:computed(()=> store.state.user)   
+                user
             }
         },
 

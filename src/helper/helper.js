@@ -6,13 +6,13 @@ const resetToastMessage = (store)=>{
                 message:"", 
                 type :null
             })
-        }, 3000);
+        }, 1500);
 }
 
 const resetRequestState = (store)=>{
     setTimeout(() => {
         store.commit('resetRequestState')
-    }, 3000);
+    }, 1500);
 }
 
 const convertToVND = (number)=>{
