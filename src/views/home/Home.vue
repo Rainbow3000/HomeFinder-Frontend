@@ -12,7 +12,7 @@
                     <i  class="fa-solid fa-caret-down"></i>
                     <div v-if="isDropdownAreaOpen === true" class="filter-area">
                         <ul>
-                            <li v-for="province in provinces" :key="province" @click="onFilterCity(province)">{{ province.name }}</li>           
+                            <li v-for="province in provinces" :key="province" @click="onFilterCity(province.name)">{{ province.name }}</li>           
                         </ul>
                     </div>
                 </div>
@@ -143,7 +143,6 @@ export default {
 
 
         const indexActive = ref(0)
-        const provinceSlected = ref(""); 
         const filter = reactive({
             Price:"",
             Area:0,
@@ -171,9 +170,8 @@ export default {
             isDropdownAreaOpen.value = false;
         }
 
-        const onFilterCity = (province)=>{
-            provinceSlected.value = province.name; 
-            filter.City = province.codename; 
+        const onFilterCity = (provinceName)=>{
+            filter.City = provinceName; 
         }
 
         const onFilterPrice = (value)=>{
@@ -319,7 +317,6 @@ export default {
             farvourite:computed(()=> store.state.farvouriteRooms),
             indexActive,
             provinces:computed(()=> store.state.provinces),
-            provinceSlected
         }
     }
 }

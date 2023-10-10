@@ -52,7 +52,7 @@
                     <span class="text-error">{{ error.city }}</span>
                     <select v-model="postData.city" name="" id="">
                         <option value="" disabled>Chọn thành phố</option>
-                        <option v-for="province in provinces" :key="province" :value="province.codename">{{ province.name }}</option>
+                        <option v-for="province in provinces" :key="province" :value="province.name">{{ province.name }}</option>
                     </select>
                 </div>
     
