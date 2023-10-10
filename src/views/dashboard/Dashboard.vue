@@ -22,7 +22,7 @@
     import UserInfo from '@/components/userinfo/UserInfo.vue';
     import { ref,computed,reactive } from 'vue';
     import {useStore } from "vuex";
-import { useRouter } from 'vue-router';
+    import { useRouter } from 'vue-router';
     export default{
         components:{
             PostList,
@@ -30,7 +30,20 @@ import { useRouter } from 'vue-router';
         },
 
         setup() {
-          
+    
+            const filter = reactive({
+                Price:"",
+                Area:0,
+                City:"",
+                Offset:0,
+                Limit:5,
+                TextSearch:"",
+                Level:0,
+                Time:"",
+                CategoryId:""
+            }) 
+            
+            store.dispatch("getRoomList",filter); 
             const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
             const store = useStore();
             const router = useRouter();
@@ -49,18 +62,7 @@ import { useRouter } from 'vue-router';
 
             store.dispatch('getProvincesVN'); 
 
-            const filter = reactive({
-                Price:"",
-                Area:0,
-                City:"",
-                Offset:0,
-                Limit:5,
-                TextSearch:"",
-                Level:0,
-                Time:"",
-                CategoryId:""
-            }) 
-            store.dispatch("getRoomList",filter); 
+          
 
             return {
                 componentNumber,
