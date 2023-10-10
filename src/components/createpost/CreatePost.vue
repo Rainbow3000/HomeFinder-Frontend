@@ -52,12 +52,7 @@
                     <span class="text-error">{{ error.city }}</span>
                     <select v-model="postData.city" name="" id="">
                         <option value="" disabled>Chọn thành phố</option>
-                        <option value="Hà Nội">Hà Nội</option>
-                        <option value="Vĩnh Phúc">Vĩnh Phúc</option>
-                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                        <option value="Đà Nẵng">Đà Nẵng</option>
-                        <option value="Cần Thơ">Cần Thơ</option>
-                        <option value="Hải Phòng">Hải Phòng</option>
+                        <option v-for="province in provinces" :key="province" :value="province.codename">{{ province.name }}</option>
                     </select>
                 </div>
     
@@ -311,7 +306,6 @@ import { useRouter } from 'vue-router';
             
             store.dispatch("getCategoryList"); 
 
-
             if(isShowCreatePost?.value?.type === 2){
                 const singleRoom = computed(()=> store.state.singleRoom)
                 watch(()=> singleRoom.value,(newValue,oldValue)=>{
@@ -370,7 +364,8 @@ import { useRouter } from 'vue-router';
                 imageUrlUploads,
                 error,
                 isShowCreatePost,     
-                user:computed(()=> store.state.user)   
+                user:computed(()=> store.state.user),
+                provinces:computed(()=> store.state.provinces) 
             }
         }
 

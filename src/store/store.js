@@ -1,5 +1,6 @@
 
 import { publicRequest, userRequest } from '@/instanceAxios'
+import axios from 'axios';
 import { createStore } from 'vuex'
 
 const store = createStore({
@@ -18,6 +19,7 @@ const store = createStore({
           type:null
          }
        }, 
+       provinces:[],
        serverResponseData:{
           room:{
             success:false,
@@ -177,6 +179,10 @@ const store = createStore({
    setAccountError(state,payload){
       state.error.account.text = payload.Message; 
       state.error.account.statusCode = payload.statusCode;
+   },
+
+   setProvinces(state,payload){
+     state.provinces = payload; 
    }
   },
   actions:{
@@ -199,6 +205,17 @@ const store = createStore({
         }
       } catch (error) {
         commit('setRequestError',error.response.data)
+      }
+    },
+
+    async getProvincesVN({commit}){
+      try {
+        const {data} = await axios.get('https://provinces.open-api.vn/api/'); 
+        if(data){
+          commit('setProvinces',data);
+        }
+      } catch (error) {
+        console.log(error); 
       }
     },
 

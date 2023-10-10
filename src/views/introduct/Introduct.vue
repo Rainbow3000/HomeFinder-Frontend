@@ -8,7 +8,6 @@
             <li>3. Để quản lý tin và thông tin cá nhân truy cập mục Quản Lý Tin <strong>Phải đăng nhập</strong></li>
             <li>4. Người dùng có thể lưu tin bằng cách click vào biểu tượng trái tim trên tin (hoặc xóa tin đã lưu) để tiện cho việc tìm kiếm lại sau này</li>
             <li>- Dự kiến tương lai trang web sẽ cập nhật thêm các chức năng khác như  (chờ duyệt tin, nhắn tin trực tiếp, buôn bán ...)  </li>
-            <li>Mọi thắc mắc cần giải đáp xin gửi email cho mình vào địa chỉ: <strong>nguyenducthinh0401@gmail.com</strong>. Xin cảm ơn ! </li>
         </ul>
     </div>
 </template>

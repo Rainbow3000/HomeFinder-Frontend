@@ -91,6 +91,7 @@
 
 .filter-area{
     height: auto;
+    height: 280px;
     padding: 20px 0;
     width: 100%;
     position: absolute;
@@ -99,7 +100,34 @@
     top: 49px;
     border-radius: 5px;  
     background-color: #FFFFFF;  
+    overflow: hidden !important;
+    overflow-y: scroll !important;
 }
+
+
+.filter-area::-webkit-scrollbar-track
+{
+	background-color: #F5F5F5;
+}
+
+.filter-area::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F5;
+}
+
+.filter-area::-webkit-scrollbar-thumb
+{
+	background-color: rgba(128, 128, 128, 0.226);
+}
+
+
+
+
+.filter-area ul li{
+   margin-bottom: 20px;
+}
+
 
 .filter-price{
     height: auto;

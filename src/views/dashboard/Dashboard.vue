@@ -47,6 +47,8 @@ import { useRouter } from 'vue-router';
                 router.push({path:'/'})
             }
 
+            store.dispatch('getProvincesVN'); 
+
             return {
                 componentNumber,
                 handleChangeComponent,

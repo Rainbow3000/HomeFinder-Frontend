@@ -8,14 +8,11 @@
                 </div>
                 <div @click="onOpenDropdownArea" class="home-filter">
                     <i style="margin-right: 5px;" class="fa-solid fa-location-dot"></i> 
-                    <span>{{ filter.City !== "" ? `TP.${filter.City}` : 'Lọc theo thành phố'  }}</span>
+                    <span>{{ provinceSlected !== "" ? `${provinceSlected}` : 'Lọc theo khu vực'  }}</span>
                     <i  class="fa-solid fa-caret-down"></i>
                     <div v-if="isDropdownAreaOpen === true" class="filter-area">
                         <ul>
-                            <li @click="onFilterCity('Hà Nội')">Hà Nội</li>
-                            <li @click="onFilterCity('Hồ Chí Minh')">Hồ Chí Minh</li>
-                            <li @click="onFilterCity('Nha Trang')">Nha Trang</li>
-                            <li @click="onFilterCity('Vĩnh Phúc')">Vĩnh Phúc</li>
+                            <li v-for="province in provinces" :key="province" @click="onFilterCity(province)">{{ province.name }}</li>           
                         </ul>
                     </div>
                 </div>
@@ -38,8 +35,8 @@
 
         <div class="home-category">
             <ul>
-                <li @click="onFilterAllCategory" class="active">Tất cả</li>
-                <li v-for="category in categorys" :key="category.categoryId" @click="onFilterCategory(category.categoryId)" >{{ category.name}} ({{ category.quantity }})</li>
+                <li @click="onFilterAllCategory" :class=" indexActive === 0 ? 'active' : ''">Tất cả</li>
+                <li :class="indexActive === category.categoryId ? 'active':''" v-for="category in categorys" :key="category.categoryId" @click="onFilterCategory(category.categoryId)" >{{ category.name}} ({{ category.quantity }})</li>
             </ul>
         </div>
         <div class="home-main">
@@ -143,6 +140,10 @@ import Paginate from "vuejs-paginate-next";
 export default {
     components: { Button,Paginate },
     setup(){
+
+
+        const indexActive = ref(0)
+        const provinceSlected = ref(""); 
         const filter = reactive({
             Price:"",
             Area:0,
@@ -170,8 +171,9 @@ export default {
             isDropdownAreaOpen.value = false;
         }
 
-        const onFilterCity = (value)=>{
-            filter.City = value; 
+        const onFilterCity = (province)=>{
+            provinceSlected.value = province.name; 
+            filter.City = province.codename; 
         }
 
         const onFilterPrice = (value)=>{
@@ -251,6 +253,7 @@ export default {
 
         const onFilterCategory = (categoryId)=>{
             filter.CategoryId = categoryId; 
+            indexActive.value = categoryId; 
         }
 
         const onPagingChange = (pageNumber)=>{
@@ -259,6 +262,7 @@ export default {
 
 
         const onFilterAllCategory = ()=>{
+            indexActive.value = 0;
             const filter = reactive({
                 Price:"",
                 Area:0,
@@ -287,6 +291,9 @@ export default {
 
         store.dispatch('getPageSizeRoom');
 
+        store.dispatch('getProvincesVN'); 
+        
+
 
         return {
             categorys:computed(()=> store.state.categorys), 
@@ -309,7 +316,10 @@ export default {
             pageSize:computed(()=> store.state.pageSize),
             onFilterAllCategory,
             onAddFavourite,
-            farvourite:computed(()=> store.state.farvouriteRooms)
+            farvourite:computed(()=> store.state.farvouriteRooms),
+            indexActive,
+            provinces:computed(()=> store.state.provinces),
+            provinceSlected
         }
     }
 }
