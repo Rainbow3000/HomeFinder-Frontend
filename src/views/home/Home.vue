@@ -237,7 +237,17 @@ export default {
 
         watch(()=>filter.TextSearch,(newValue,oldValue)=>{
             setTimeout(() => {     
-                store.dispatch("getRoomList",filter); 
+                store.dispatch("getRoomList",{
+                    Price:"",
+                    Area:0,
+                    City:"",
+                    Offset:0,
+                    Limit:5,
+                    TextSearch:newValue,
+                    Level:0,
+                    Time:"",
+                    CategoryId:""
+            }); 
             },1500);
         })
 
