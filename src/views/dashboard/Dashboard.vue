@@ -31,11 +31,9 @@ import { useRouter } from 'vue-router';
 
         setup() {
           
-            const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
+            const componentNumber = ref(JSON.parse(localStorage.getItem('component')) !== null ? JSON.parse(localStorage.getItem('component')) : 1)   
             const store = useStore();
             const router = useRouter();
-            localStorage.setItem('component',1); 
-
             const handleChangeComponent = (number)=>{
                 componentNumber.value = number
                 localStorage.setItem('component',number); 
