@@ -22,9 +22,11 @@
          <td>{{ LevelEnum[room.level] }}</td>
          <td>{{ StatusEnum[room.status] }}</td>
          <td>
-           <Button @click="onUpdatePost(room.roomId)" type="normal" name="Sửa"/>
-           <Button @click="onDeletePost(room.roomId)" type="normal" name="Xóa"/>
-           <Button @click="onUpdateStatusPost(room.roomId)" type="normal" :name=" room.status === 1 ? 'Ẩn Tin' : 'Bỏ ẩn'"/>
+            <div class="btn-post-list-wrap">
+              <Button @click="onUpdatePost(room.roomId)" type="normal" name="Sửa"/>
+              <Button @click="onDeletePost(room.roomId)" type="normal" name="Xóa"/>
+              <Button @click="onUpdateStatusPost(room.roomId)" type="normal" :name=" room.status === 1 ? 'Ẩn Tin' : 'Bỏ ẩn'"/>
+            </div>
           </td>
        </tr>
       </table>

@@ -1,6 +1,5 @@
 <template>
     <div class="details-container">
-        {{ singleRoom }}
         <h1 class="details-title">Xem chi tiết phòng</h1>
         <span class="details-home-name">{{ singleRoom?.name }}</span>
         <div class="details-main">
@@ -46,7 +45,7 @@
         <div class="details-description">
             <div class="details-description-top">
                 <h1>Mô tả chi tiết:</h1>
-                <i @click="onAddFavourite(singleRoom)" title="Lưu tin" class="fa-solid fa-heart heart-details" :class="farvourite?.[singleRoom.roomId] !== undefined ? 'favourite':''"></i>
+                <i @click="onAddFavourite(singleRoom)" title="Lưu tin" class="fa-solid fa-heart heart-details" :class="farvourite?.[singleRoom?.roomId] !== undefined ? 'favourite':''"></i>
             </div>
             <p class="details-description-body">
                 <ul>

@@ -51,7 +51,9 @@ const store = createStore({
   mutations: {
 
 
-
+    setCreatePost(state,payload){
+      state.rooms = [payload,...state.rooms.slice(0)];
+    },
     setFavouriteRoom(state,payload){
       const favouriteItem = state.farvouriteRooms[payload.roomId]; 
       if(favouriteItem !== undefined){
@@ -103,7 +105,7 @@ const store = createStore({
         state.user = null; 
         state.link.isLogin = false; 
         state.link.isRegister = false; 
-        state.link.isShowCreatePost = false;  
+        state.link.isShowCreatePost.isShow = false;  
         state.showOverlay = false; 
         state.account.loginSuccess = false; 
         state.account.registerSuccess = false; 
@@ -122,7 +124,11 @@ const store = createStore({
       state.categorys = payload
     },
     showCreatePost(state,payload){
-      state.link.isShowCreatePost.isShow = !state.link.isShowCreatePost.isShow;
+      state.link.isShowCreatePost.isShow =  true;
+      state.link.isShowCreatePost.type = payload.type;  
+    },
+    hiddenCreatePost(state,payload){
+      state.link.isShowCreatePost.isShow =  false;
       state.link.isShowCreatePost.type = payload.type;  
     },
     setUserLogin(state,payload){
@@ -251,6 +257,7 @@ const store = createStore({
           })
         }
       } catch (error) {
+        console.log(error);
         commit('setRequestError',error.response.data)
       }
     },

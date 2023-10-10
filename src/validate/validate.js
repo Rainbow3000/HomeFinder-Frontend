@@ -9,7 +9,7 @@ const validateNotMatchPassword = (password,rePassword)=>{
 
 
 const validateUserNameInvalid = (text)=>{
-    if(text.trim().length < 6){
+    if(text.trim().length < 3){
         return true; 
     }
     return false; 

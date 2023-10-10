@@ -74,7 +74,7 @@
                                         <ul>
                                     
                                             <li><i class="fa-solid fa-money-check-dollar room-info-icon"></i> Giá: <strong><span style="color: red;">{{ convertToVND(room?.price) }}</span> / 1 tháng</strong></li>
-                                            <li><i class="fa-solid fa-location-dot room-info-icon"></i> Địa chỉ: <strong> {{ room?.address }}</strong></li>
+                                            <li><i class="fa-solid fa-location-dot room-info-icon"></i> Địa chỉ: <strong> {{ room?.city }}</strong></li>
                                             <li><i class="fa-solid fa-chart-area room-info-icon"></i> Diện tích: <strong>{{ AreaEnum[room.area] }}</strong></li>
                                             <li><i class="fa-solid fa-phone room-info-icon"></i> Số điện thoại:  <strong>{{ room.phoneNumber }}</strong></li>
                                             <li><router-link :to="'/details/' + room.roomId" ><Button type="success" name="Xem chi tiết"></Button></router-link></li>      
@@ -88,11 +88,10 @@
                   
                 </div>
              
-
                 <div class="home-pagination">
                     <paginate
-                    :page-count="pageSize"
-                    :page-range="10"
+                    :page-count=" Math.ceil(pageSize / 5)"
+                    :page-range="5"
                     :click-handler="onPagingChange"
                     :prev-text="'Trước'"
                     :next-text="'Sau'"
@@ -202,7 +201,18 @@ export default {
         })
 
         watch(()=>filter.Offset ,(newValue,oldValue)=>{
-             store.dispatch('getRoomList',filter)
+            console.log(newValue);
+             store.dispatch('getRoomList',{
+                Price:"",
+                Area:0,
+                City:"",
+                Offset:newValue,
+                Limit:5,
+                TextSearch:"",
+                Level:0,
+                Time:"",
+                CategoryId:""
+            })
         })
 
 
@@ -243,11 +253,22 @@ export default {
         }
 
         const onPagingChange = (pageNumber)=>{
-            filter.Offset = filter.Limit * pageNumber; 
+            filter.Offset = filter.Limit * (pageNumber - 1); 
         }
 
 
         const onFilterAllCategory = ()=>{
+            const filter = reactive({
+                Price:"",
+                Area:0,
+                City:"",
+                Offset:0,
+                Limit:5,
+                TextSearch:"",
+                Level:0,
+                Time:"",
+                CategoryId:""
+            }) 
             store.dispatch("getRoomList",filter); 
         }
 

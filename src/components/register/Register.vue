@@ -127,7 +127,7 @@ import { reactive, computed , watch, ref } from 'vue';
 
 
                 if(validateUserNameInvalid(userData.userName)){
-                    error.userName = "Tên người dùng phải lớn hơn 5 kí tự"
+                    error.userName = "Tên người dùng phải lớn hơn 2 kí tự"
                     isError.value = true;
                 }
 

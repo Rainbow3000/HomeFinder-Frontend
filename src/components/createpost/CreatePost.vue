@@ -151,14 +151,23 @@ import { useRouter } from 'vue-router';
                 categoryId: "",
             }); 
 
+            const filter = reactive({
+                Price:"",
+                Area:0,
+                City:"",
+                Offset:0,
+                Limit:5,
+                TextSearch:"",
+                Level:0,
+                Time:"newest",
+                CategoryId:""
+            }) 
+
 
             const roomResponseData = computed(()=> store.state.serverResponseData.room) 
 
-          
-
-
             const onCloseForm = ()=>{
-                store.commit("showCreatePost",{
+                store.commit("hiddenCreatePost",{
                     type:null
                 }); 
                 store.commit('hiddenOverlay')
@@ -246,20 +255,20 @@ import { useRouter } from 'vue-router';
                 
             }
             
-            watch(()=> roomResponseData.value.success,(newValue,oldValue)=>{
-                if(newValue){
-                   onCloseForm(); 
-                   store.commit('showToastMessage',{
-                        isShow:true,
-                        message:"Tạo tin thành công !", 
-                        type :"success"
-                   })
-
-                   store.dispatch('getCategoryList'); 
-                   resetToastMessage(store); 
-                   resetRequestState(store); 
-                   router.push({ path: '/' });
-                }
+            watch(()=> roomResponseData.value,(newValue,oldValue)=>{        
+                store.commit('showToastMessage',{
+                    isShow:true,
+                    message:"Tạo tin thành công !", 
+                    type :"success"
+                })
+                store.dispatch('getCategoryList');
+                store.dispatch('getRoomList',filter) 
+                store.dispatch('getPageSizeRoom');
+                resetToastMessage(store); 
+                resetRequestState(store); 
+                router.push({ path: '/' });
+                onCloseForm(); 
+                
             })
 
             const onImageFileChange = (event)=>{
@@ -301,6 +310,7 @@ import { useRouter } from 'vue-router';
             
             
             store.dispatch("getCategoryList"); 
+
 
             if(isShowCreatePost?.value?.type === 2){
                 const singleRoom = computed(()=> store.state.singleRoom)
