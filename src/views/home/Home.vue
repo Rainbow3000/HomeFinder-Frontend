@@ -15,6 +15,7 @@
                             <li @click="onFilterCity('Hà Nội')">Hà Nội</li>
                             <li @click="onFilterCity('Hồ Chí Minh')">Hồ Chí Minh</li>
                             <li @click="onFilterCity('Nha Trang')">Nha Trang</li>
+                            <li @click="onFilterCity('Vĩnh Phúc')">Vĩnh Phúc</li>
                         </ul>
                     </div>
                 </div>
