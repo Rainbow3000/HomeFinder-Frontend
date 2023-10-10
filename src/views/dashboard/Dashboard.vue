@@ -20,9 +20,9 @@
 <script>
     import PostList from '@/components/postList/PostList.vue';
     import UserInfo from '@/components/userinfo/UserInfo.vue';
-    import { ref,computed,reactive } from 'vue';
+    import { ref,computed } from 'vue';
     import {useStore } from "vuex";
-    import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
     export default{
         components:{
             PostList,
@@ -30,24 +30,10 @@
         },
 
         setup() {
-            
+          
+            const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
             const store = useStore();
             const router = useRouter();
-            
-            const filter = reactive({
-                Price:"",
-                Area:0,
-                City:"",
-                Offset:0,
-                Limit:5,
-                TextSearch:"",
-                Level:0,
-                Time:"",
-                CategoryId:""
-            }) 
-            
-            store.dispatch("getRoomList",filter); 
-            const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
             localStorage.setItem('component',1); 
 
             const handleChangeComponent = (number)=>{
@@ -61,7 +47,9 @@
                 router.push({path:'/'})
             }
 
-            store.dispatch('getProvincesVN'); 
+            store.dispatch('getRoomByUser',user.value.accountId); 
+            
+
             return {
                 componentNumber,
                 handleChangeComponent,

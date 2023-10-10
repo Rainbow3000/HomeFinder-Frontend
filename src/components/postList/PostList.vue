@@ -46,20 +46,7 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
       Button
     },
     setup(){
-      const store = useStore(); 
-      const filter = reactive({
-            Price:"",
-            Area:0,
-            City:"",
-            Offset:0,
-            Limit:5,
-            TextSearch:"",
-            Level:0,
-            Time:"",
-            CategoryId:""
-          }) 
-        store.dispatch("getRoomByUser",JSON.parse(localStorage.getItem('user')).accountId); 
-      
+        const store = useStore(); 
         const onUpdatePost = (roomId)=>{
           store.dispatch('getSingleRoom',roomId); 
           store.commit("showCreatePost",{
