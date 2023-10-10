@@ -8,7 +8,7 @@
                 </div>
                 <div @click="onOpenDropdownArea" class="home-filter">
                     <i style="margin-right: 5px;" class="fa-solid fa-location-dot"></i> 
-                    <span>{{ provinceSlected !== "" ? `${provinceSlected}` : 'Lọc theo khu vực'  }}</span>
+                    <span>{{ filter.City !== "" ? `${filter.City}` : 'Lọc theo khu vực'  }}</span>
                     <i  class="fa-solid fa-caret-down"></i>
                     <div v-if="isDropdownAreaOpen === true" class="filter-area">
                         <ul>
