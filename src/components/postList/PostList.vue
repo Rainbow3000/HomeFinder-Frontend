@@ -67,7 +67,6 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
           })
           store.commit('showOverlay')
         }
-
         const onDeletePost = (roomId)=>{
           store.dispatch('deleteRoom',roomId);
       
@@ -98,7 +97,6 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
   
         const onUpdateStatusPost = (roomId)=>{
           store.dispatch('updateStatusRoom',roomId); 
-          store.dispatch('getRoomList',filter); 
           store.commit('showToastMessage',{
               isShow:true,
               message:"Cập nhật trạng thái tin thành công !", 

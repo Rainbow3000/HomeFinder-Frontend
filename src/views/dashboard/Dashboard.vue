@@ -30,7 +30,10 @@
         },
 
         setup() {
-    
+            
+            const store = useStore();
+            const router = useRouter();
+            
             const filter = reactive({
                 Price:"",
                 Area:0,
@@ -45,8 +48,6 @@
             
             store.dispatch("getRoomList",filter); 
             const componentNumber = ref(JSON.parse(localStorage.getItem('component')))   
-            const store = useStore();
-            const router = useRouter();
             localStorage.setItem('component',1); 
 
             const handleChangeComponent = (number)=>{
