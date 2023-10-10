@@ -49,6 +49,19 @@ import { useRouter } from 'vue-router';
 
             store.dispatch('getProvincesVN'); 
 
+            const filter = reactive({
+                Price:"",
+                Area:0,
+                City:"",
+                Offset:0,
+                Limit:5,
+                TextSearch:"",
+                Level:0,
+                Time:"",
+                CategoryId:""
+            }) 
+            store.dispatch("getRoomList",filter); 
+            
             return {
                 componentNumber,
                 handleChangeComponent,
