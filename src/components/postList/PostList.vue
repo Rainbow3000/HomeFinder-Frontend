@@ -95,6 +95,7 @@ import {AreaEnum,StatusEnum,LevelEnum} from '@/enum/enum.js'
     
         }
 
+  
         const onUpdateStatusPost = (roomId)=>{
           store.dispatch('updateStatusRoom',roomId); 
           store.dispatch('getRoomList',filter); 

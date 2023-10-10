@@ -20,7 +20,7 @@
 <script>
     import PostList from '@/components/postList/PostList.vue';
     import UserInfo from '@/components/userinfo/UserInfo.vue';
-    import { ref,computed } from 'vue';
+    import { ref,computed,reactive } from 'vue';
     import {useStore } from "vuex";
 import { useRouter } from 'vue-router';
     export default{
@@ -61,7 +61,7 @@ import { useRouter } from 'vue-router';
                 CategoryId:""
             }) 
             store.dispatch("getRoomList",filter); 
-            
+
             return {
                 componentNumber,
                 handleChangeComponent,
