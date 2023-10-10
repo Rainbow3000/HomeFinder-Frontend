@@ -3,8 +3,8 @@
         <div class="dashboard-left">
             <h1>Quản trị</h1>
             <ul>
-                <li @click="()=>handleChangeComponent(1)">Quản lý bài đăng</li>
-                <li @click="()=>handleChangeComponent(2)">Quản lý tài khoản</li>
+                <li @click="handleChangeComponent(1)">Quản lý bài đăng</li>
+                <li @click="handleChangeComponent(2)">Quản lý tài khoản</li>
             </ul>
         </div>
         <div class="dashboard-right">
@@ -61,9 +61,6 @@
             }
 
             store.dispatch('getProvincesVN'); 
-
-          
-
             return {
                 componentNumber,
                 handleChangeComponent,
